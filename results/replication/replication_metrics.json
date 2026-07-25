@@ -1,0 +1,72 @@
+{
+  "n_cells_total": 89736,
+  "n_cells_covid": 4441,
+  "n_cells_normal": 85295,
+  "n_donors": 618,
+  "n_donors_covid": 43,
+  "n_donors_normal": 575,
+  "n_datasets": 35,
+  "injury_composite": {
+    "covid_median": -0.03086781102668266,
+    "normal_median": 0.028179621100688734,
+    "difference_median": -0.059047432127371395,
+    "variance_covid": 0.05052578204942131,
+    "variance_normal": 0.03059775026827835,
+    "variance_ratio_covid_over_normal": 1.6512907519806441,
+    "levene_stat": 626.1806525856521,
+    "levene_p": 1.0074779479094171e-137,
+    "mannwhitney_u_one_sided_p": 1.0,
+    "rank_biserial_r": 0.15247017916111083,
+    "donor_level_n_covid": 43,
+    "donor_level_n_normal": 575,
+    "donor_level_mannwhitney_p": 0.001979929586064282
+  },
+  "datp": {
+    "covid_fraction": 0.22877730240936725,
+    "normal_fraction": 0.47624128026261797,
+    "fold_enrichment": 0.48038108389766326,
+    "chi2_p": 8.093805524943658e-228
+  },
+  "per_program_cell_level": {
+    "AT2_identity": {
+      "median_covid": 0.2693755891587999,
+      "median_normal": 1.7744885550604925,
+      "mw_one_sided_greater_p": 1.0
+    },
+    "AT1_identity": {
+      "median_covid": 0.31701449155807493,
+      "median_normal": -0.079429030418396,
+      "mw_one_sided_greater_p": 7.89224894014338e-104
+    },
+    "interferon_response": {
+      "median_covid": 0.013205484786943833,
+      "median_normal": -0.062369611528184654,
+      "mw_one_sided_greater_p": 1.9604066809600882e-194
+    },
+    "nfkb_inflammatory": {
+      "median_covid": -0.2606070145316746,
+      "median_normal": -0.2599353958731112,
+      "mw_one_sided_greater_p": 0.7110343239988394
+    },
+    "oxidative_stress": {
+      "median_covid": -0.06894048055013013,
+      "median_normal": 0.14981615543365479,
+      "mw_one_sided_greater_p": 1.0
+    },
+    "AT2_to_AT1_differentiation": {
+      "median_covid": 0.13062167167663574,
+      "median_normal": 0.2293739914894104,
+      "mw_one_sided_greater_p": 0.9999999999999755
+    },
+    "apoptosis": {
+      "median_covid": -0.25675165403139344,
+      "median_normal": -0.09067804329878798,
+      "mw_one_sided_greater_p": 1.0
+    },
+    "senescence": {
+      "median_covid": 0.0,
+      "median_normal": 0.006766248884655185,
+      "mw_one_sided_greater_p": 1.0
+    }
+  }
+}

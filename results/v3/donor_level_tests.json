@@ -1,0 +1,57 @@
+{
+  "median_pseudotime": {
+    "metric": "median_pseudotime",
+    "n_covid": 20,
+    "n_healthy": 7,
+    "covid_median": 0.11354140937328339,
+    "healthy_median": 0.07211533188819885,
+    "U": 110.0,
+    "p_two_sided": 0.026330191547582853,
+    "p_one_sided_greater": 0.013165095773791427,
+    "rank_biserial_r": -0.5714285714285714
+  },
+  "within_donor_dispersion": {
+    "metric": "within_donor_dispersion",
+    "n_covid": 20,
+    "n_healthy": 7,
+    "covid_median": 15.06992244720459,
+    "healthy_median": 8.234886169433594,
+    "U": 88.0,
+    "p_two_sided": 0.3410943323986802,
+    "p_one_sided_greater": 0.1705471661993401,
+    "rank_biserial_r": -0.2571428571428571
+  },
+  "frac_transitional": {
+    "metric": "frac_transitional",
+    "n_covid": 20,
+    "n_healthy": 7,
+    "covid_median": 0.02870538943063072,
+    "healthy_median": 0.01977552111170497,
+    "U": 78.0,
+    "p_two_sided": 0.6850106415323807,
+    "p_one_sided_greater": 0.34250532076619034,
+    "rank_biserial_r": -0.11428571428571432
+  },
+  "median_dist_to_donor_centroid": {
+    "metric": "median_dist_to_donor_centroid",
+    "n_covid": 20,
+    "n_healthy": 7,
+    "covid_median": 7.772499084472656,
+    "healthy_median": 10.58382511138916,
+    "U": 13.0,
+    "p_two_sided": 0.0007387137821920431,
+    "p_one_sided_greater": 0.9997229823316779,
+    "rank_biserial_r": 0.8142857142857143
+  },
+  "iqr_pseudotime": {
+    "metric": "iqr_pseudotime",
+    "n_covid": 20,
+    "n_healthy": 7,
+    "covid_median": 0.042549267411231995,
+    "healthy_median": 0.16604706645011902,
+    "U": 10.0,
+    "p_two_sided": 0.00029728725380899295,
+    "p_one_sided_greater": 0.9998941477202347,
+    "rank_biserial_r": 0.8571428571428572
+  }
+}

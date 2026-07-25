@@ -1,0 +1,146 @@
+#+TITLE: Alveolar Epithelial Cells in Lethal COVID-19 Fan Out Along a Continuous Injury Axis
+#+SUBTITLE: Trajectory Analysis of the Columbia/NYP Lung Atlas with Ten-Way Ablation Robustness
+#+AUTHOR: [Author names and affiliations to be added]
+#+DATE: 2026-04-14
+#+OPTIONS: toc:2 num:t
+#+LATEX_CLASS: article
+#+LATEX_CLASS_OPTIONS: [11pt]
+#+LATEX_HEADER: \usepackage[margin=1in]{geometry}
+#+LATEX_HEADER: \usepackage{graphicx}
+#+LATEX_HEADER: \usepackage{booktabs}
+#+LATEX_HEADER: \graphicspath{{../results/figures/}}
+
+* Abstract
+
+The alveolar epithelium sustains gas exchange through the coordinated function of AT1 and AT2 cells, with AT2 cells serving as the resident progenitors for injury repair. In lethal COVID-19, these cells face concurrent viral assault (ACE2-mediated entry) and inflammatory collateral damage. We analyzed 22,128 alveolar epithelial cells (9,608 AT1; 11,341 AT2; 1,179 ECM-high transitional) from the Columbia/NYP COVID-19 Lung Atlas (SCP1219): 12,181 nuclei from 7 healthy donors and 9,947 from 20 COVID-19 donors. We constructed a transcriptomic manifold (Seurat-v3 HVGs, PCA, k-NN, UMAP, diffusion map), computed diffusion pseudotime rooted at the healthy AT2 centroid, and scored each cell for eight curated gene programs. Ten pre-specified ablations stress-tested every major analytical choice.
+
+COVID-19 cells were shifted toward higher pseudotime (median 0.111 vs. 0.063; observed difference +0.048; permutation /p/ = 0.001, /N/ = 1000). The primary analysis did *not* support directional centroid displacement (one-sided Mann--Whitney /U/, COVID > Healthy, /p/ = 1.0; rank-biserial /r/ = 0.14). COVID-19 cells showed substantially greater within-group dispersion (variance 33.3 vs. 14.6; Levene /p/ < 10^{-30}). A KRT8^{+}/CLDN4^{+} transitional population was enriched 3.1-fold in COVID-19 (8.5% vs. 2.7%). Program ordering was stable under curated-only programs (Spearman ρ = 1.0) but inverted under MSigDB-only programs (ρ = -0.80). Leave-one-donor-out preserved the pseudotime-shift direction in all 27 iterations (range 0.028-0.202). Two of three pre-registered criteria were supported (dispersion, pseudotime); one was not (centroid displacement). Composite: *moderate*.
+
+* Introduction
+
+Every breath depends on a thin layer of cells deep in the lung: the alveolar epithelium, composed of AT1 cells (flat; gas-exchange barrier) and AT2 cells (cuboidal; surfactant production and resident stem cells). When AT1 cells are lost, AT2 cells differentiate through a KRT8^{+}/CLDN4^{+}/SFN^{+} transitional state (Barkauskas 2013; Kobayashi 2020; Strunz 2020).
+
+In lethal COVID-19, SARS-CoV-2 enters AT2 cells via ACE2 (Ziegler 2020; Hou 2020); dysregulated inflammation damages the epithelium from both directions. Cluster-based analyses of COVID-19 lung atlases (Melms 2021; Delorey 2021) force continuous biology into discrete bins. A trajectory-based approach --- treating each cell's expression profile as a position on a transcriptomic manifold, ordering cells by pseudotime (Haghverdi 2016; Setty 2019) --- can in principle resolve staged failure. Here we apply such an approach, with systematic ablation-based validation, to the alveolar compartment of SCP1219 (Melms 2021), and frame the observed patterns as /epithelial robustness collapse/.
+
+* Results
+
+** Cohort composition
+
+22,128 alveolar epithelial cells (9,608 AT1; 11,341 AT2; 1,179 ECM-high) from 7 healthy donors (12,181 nuclei) and 20 COVID-19 donors (9,947 nuclei). Per-donor counts 62-2,850; 10/27 donors < 300 cells. Marker validation: AT2 SFTPC/SFTPA1, AT1 AGER/HOPX, ECM-high KRT8/CLDN4 (Table S3). ECM-high 3.1-fold enriched in COVID-19 (8.5% vs. 2.7%; χ² /p/ < 10^{-30}).
+
+** Manifold and pseudotime
+
+Normalization → log1p → 3,000 HVGs (Seurat v3) → scale → 50-PC PCA → k-NN (k=15) → UMAP, diffusion map. Harmony batch correction was configured but *failed at runtime* (harmonypy returned shape (50,) instead of (22128, 50)); pipeline fell back to uncorrected PCA, and Ablation 3 explicitly tests this fallback. Diffusion pseudotime rooted at cell nearest healthy-AT2 centroid in diffusion-component space, min-max normalized to [0, 1].
+
+#+CAPTION: UMAP by condition (a) and cell type (b).
+#+NAME: fig:fig1
+[[file:../results/figures/fig1a_condition.pdf]]
+
+#+CAPTION: Pseudotime on UMAP.
+#+NAME: fig:fig2
+[[file:../results/figures/fig2_pseudotime.pdf]]
+
+** Pseudotime shift
+
+Control median pseudotime 0.063; COVID 0.111; observed difference +0.0483. 1000-permutation null: mean 6.0×10^{-5}, std 1.24×10^{-3}; observed never exceeded; /p/ = 0.000999. Leave-one-donor-out (27 iters): direction preserved in all 27; range 0.028-0.202.
+
+#+CAPTION: Pseudotime density by condition.
+#+NAME: fig:fig4
+[[file:../results/figures/fig4_pseudotime_density.pdf]]
+
+** Centroid displacement: NOT supported
+
+One-sided Mann--Whitney /U/ (COVID > Healthy) on distance-to-healthy-centroid in PCA-50: /U/ = 5.21×10^7, /p/ = 1.0. Means COVID 12.36 vs. Healthy 12.10; medians COVID 10.68 vs. Healthy 11.56 (*COVID median lower*). Rank-biserial /r/ = 0.14 opposite to alternative. Pre-specified core test failed.
+
+** Dispersion: IS supported
+
+Within-group variance COVID 33.28 vs. Healthy 14.58 (2.3×). Levene statistic 276.5; /p/ < 10^{-30}.
+
+** Program ordering along pseudotime
+
+| Rank | Program                     | Peak   | Peak score |
+|------+-----------------------------+--------+------------|
+|    1 | AT2 identity                | 0.015  |       0.75 |
+|    2 | AT1 identity                | 0.266  |       1.25 |
+|    3 | Apoptosis                   | 0.591  |       0.17 |
+|    4 | AT2→AT1 differentiation     | 0.744  |       0.57 |
+|  4t  | NF-κB inflammatory          | 0.744  |       0.18 |
+|  4t  | Oxidative stress            | 0.744  |       0.21 |
+|    7 | Interferon response         | 0.866  |       0.33 |
+|    8 | Senescence                  | 0.935  |       0.24 |
+
+*Not* the hypothesized IFN→NF-κB→repair→apoptosis cascade. Apoptosis peaks before inflammatory/stress. Homeostatic programs peak in lower third; all injury programs in upper half. Caveats: GPX1 silently absent from HVG-restricted features and excluded from oxidative-stress program; ties at bin 0.744; =score_genes= normalizes against random background genes so absolute scores are not comparable across programs.
+
+#+CAPTION: Gene-program score trajectories.
+#+NAME: fig:fig3
+[[file:../results/figures/fig3_program_dynamics.pdf]]
+
+** ECM-high / KRT8^{+} transitional cells at intermediate pseudotime
+
+1,179 ECM-high cells at mean pseudotime 0.3-0.5, expressing KRT8/CLDN4/partial-AT1 markers (Table S3); signature matches DATPs (Kobayashi 2020; Strunz 2020; Adams 2020; Habermann 2020). 3.1-fold COVID enrichment consistent with accumulation of cells that initiated AT2→AT1 repair but did not complete it.
+
+** Ten ablations
+
+| Ablation                    | MPD      | ρ          | /r/        | Notes                                                     |
+|-----------------------------+----------+------------+------------+-----------------------------------------------------------|
+| 1 AT2-only                  | +0.133   | 0.33       | -0.29      | sign flip in /r/                                          |
+| 2 UMAP / diffmap            | +0.048   | 0.55       | +0.14      | unchanged                                                 |
+| 3 Harmony*                  | +0.048   | 0.55       | +0.14      | *both branches identical* (Harmony failed)                |
+| 4 No apoptosis genes        | +0.074   | 0.50       | +0.14      | slight increase                                           |
+| 5a root healthy-AT1         | -0.037   | 0.64       | +0.14      | root-dependent direction                                  |
+| 5b root random-healthy      | +0.010   | 0.55       | +0.14      |                                                           |
+| 5c root COVID-extreme       | -0.009   | -0.10      | +0.14      | inverts ordering (expected)                               |
+| 5d root healthy-AT2 (prim.) | +0.048   | 0.55       | +0.14      |                                                           |
+| 6 broader epithelial        | -0.008   | 0.83       | +0.25      | *shift abolished* by adding airway cells                  |
+| 7 LOO (27 iters)            | 0.028-0.202 | -0.17-0.74 | per-iter | direction preserved 27/27                                |
+| 8 curated-only              | +0.048   | 1.00       | +0.14      | stable                                                    |
+| 8 MSigDB-only               | +0.048   | -0.80      | +0.14      | *ordering inverted*                                       |
+| 9 Palantir                  | n/a      | n/a        | n/a        | *not installed*                                           |
+| 10 permutation              | /p/=0.001 | ---       | ---        | 1000 shuffles                                             |
+
+** Composite
+
+| Criterion                                  | /p/         | Outcome             |
+|--------------------------------------------+-------------+---------------------|
+| Centroid displacement (Mann--Whitney)     | 1.0         | *NOT supported*     |
+| Within-group dispersion (Levene)          | ≈ 0         | supported           |
+| Pseudotime enrichment (permutation)       | 0.000999    | supported           |
+
+*Composite: moderate* (2 of 3).
+
+* Discussion
+
+** Principal finding
+
+COVID-19 fans alveolar cells into a heterogeneous cloud --- same rough center, broader tail --- rather than moving the population coherently. The signal is /loss of coherence/, not directional motion.
+
+** Why centroid displacement failed and dispersion succeeded
+
+Median COVID distance to healthy centroid (10.68) was /lower/ than median healthy distance to healthy centroid (11.56). A uniform-displacement test averages the near-healthy COVID subpopulation against the distant COVID subpopulation and sees nothing. Dispersion captures exactly this structure. Future robustness-collapse studies should use variance/trajectory metrics.
+
+** Program ordering
+
+Data do not support a specific IFN→NF-κB→repair→apoptosis cascade. Fine ordering sensitive to gene-list (Ablation 8 MSigDB ρ = -0.80) and to root (Ablation 5 COVID-extreme ρ = -0.10). Identity-first, injury-second pattern is stable; the detailed injury-program sequence is hypothesis-generating, not confirmed.
+
+** Trajectory is alveolar-specific
+
+Ablation 6 collapses the shift when airway epithelium is included. The trajectory is a property of the alveolar compartment only; generalizing to lung epithelium requires compartment-specific trajectories.
+
+** Limitations
+
+Cross-sectional; single dataset (no replication); lethal cases only; post-mortem effects; donor imbalance (10/27 donors < 300 cells); fine ordering sensitive to gene lists; *Harmony failed → Ablation 3 cannot distinguish corrected from uncorrected*; *Palantir not installed → no orthogonal trajectory method*; *GPX1 silently dropped from oxidative-stress program* --- other programs may have analogous dropouts.
+
+** Conclusion
+
+Lethal COVID-19 does not push alveolar epithelium coherently away from the healthy state. It fans cells along a continuous pseudotime axis and increases heterogeneity. 2/3 pre-registered criteria supported (moderate composite). Pseudotime shift robust; fine program ordering hypothesis-generating; trajectory compartment-specific.
+
+* Methods (abridged)
+
+- Data: SCP1219 (Melms 2021), 116,313 nuclei; retained AT1/AT2/ECM-high alveolar epithelial (n = 22,128).
+- Preprocessing: =sc.pp.normalize_total(1e4)= → =log1p= → 3,000 Seurat-v3 HVGs → =scale(max=10)= → 50-PC PCA.
+- Graph: k-NN k=15; UMAP min_dist=0.3; 15-component diffusion map.
+- Harmony: configured (donor_id, 20 iter, sigma=0.1); harmonypy 0.2.0 returned shape (50,); pipeline fell back to uncorrected PCA.
+- Pseudotime: =sc.tl.dpt= rooted at cell nearest healthy-AT2 centroid in diffusion space; normalized to [0,1].
+- Programs: 8 programs scored with =sc.tl.score_genes= against =.raw=.
+- Tests: one-sided Mann--Whitney /U/ (displacement); Levene (dispersion); 1000-permutation median-difference (pseudotime); Spearman ρ (program ordering).
+- Software: Python 3.12.3; scanpy 1.12.1; anndata 0.12.10; numpy 2.4.3; scipy 1.17.1; pandas 2.3.3; sklearn 1.8.0; matplotlib 3.10.8; harmonypy 0.2.0. Seeds fixed to 42.

@@ -1,0 +1,2 @@
+test,observed_diff,p_value,null_mean,null_std,n_permutations
+permutation (median pseudotime difference),0.048255272,0.000999000999000999,6.010313332080841e-05,0.0012365345295381868,1000

@@ -1,0 +1,227 @@
+# =============================================================================
+# Project Configuration
+# Epithelial Robustness Collapse in Lethal COVID-19
+# =============================================================================
+
+project:
+  name: "alveolar_robustness_collapse"
+  dataset: "SCP1219"
+  dataset_url: "https://singlecell.broadinstitute.org/single_cell/study/SCP1219"
+  species: "human"
+  assay: "snRNA-seq"
+
+paths:
+  raw_data: "data/raw"
+  processed_data: "data/processed"
+  metadata: "metadata"
+  results: "results"
+  figures: "results/figures"
+  tables: "results/tables"
+  intermediate: "results/intermediate"
+  manuscript_figures: "manuscript/figures"
+  logs: "logs"
+
+# ---------------------------------------------------------------------------
+# Quality control
+# ---------------------------------------------------------------------------
+qc:
+  min_genes_per_cell: 200
+  max_genes_per_cell: 8000      # dataset-specific; inspect distribution first
+  min_cells_per_gene: 10
+  max_pct_mito: 20.0            # conservative for snRNA-seq (adjust after inspection)
+  max_total_counts: 50000       # upper outlier threshold
+
+# ---------------------------------------------------------------------------
+# Normalization and feature selection
+# ---------------------------------------------------------------------------
+normalization:
+  target_sum: 10000             # counts-per-cell normalization target
+  log_transform: true
+
+feature_selection:
+  n_top_genes: 3000
+  method: "seurat_v3"           # alternatives: "seurat", "cell_ranger"
+  batch_key: null               # set to donor/batch column if using batch-aware HVG
+
+# ---------------------------------------------------------------------------
+# Dimensionality reduction
+# ---------------------------------------------------------------------------
+dimred:
+  n_pcs: 50
+  n_neighbors: 15
+  umap:
+    min_dist: 0.3
+    spread: 1.0
+    random_state: 42
+  diffmap:
+    n_comps: 15
+
+# ---------------------------------------------------------------------------
+# Cell type subsetting
+# ---------------------------------------------------------------------------
+cell_types:
+  primary_focus:                 # SCP1219 cell_type_fine values
+    - "AT1"
+    - "AT2"
+    - "ECM-high epithelial"     # KRT8+ damage-associated transitional (Melms et al.)
+  broader_epithelial:            # for ablation 6
+    - "AT1"
+    - "AT2"
+    - "ECM-high epithelial"
+    - "Cycling epithelial"
+    - "Airway club"
+    - "Airway ciliated"
+    - "Airway basal"
+    - "Airway goblet"
+    - "Airway mucous"
+  annotation_column: "cell_type_fine"  # SCP1219 has cell_type_main / _intermediate / _fine
+
+# ---------------------------------------------------------------------------
+# Marker genes for annotation validation
+# ---------------------------------------------------------------------------
+markers:
+  AT2:
+    - SFTPC
+    - SFTPA1
+    - SFTPA2
+    - ABCA3
+    - LAMP3
+    - SLC34A2
+  AT1:
+    - AGER
+    - PDPN
+    - CLIC5
+    - HOPX
+    - CAV1
+    - EMP2
+  transitional:
+    - KRT8
+    - CLDN4
+    - SFN
+    - KRT18
+    - LGALS3
+  proliferating:
+    - MKI67
+    - TOP2A
+  general_epithelial:
+    - EPCAM
+    - CDH1
+    - KRT7
+
+# ---------------------------------------------------------------------------
+# Gene programs for scoring
+# ---------------------------------------------------------------------------
+gene_programs:
+  AT2_identity:
+    genes: [SFTPC, SFTPA1, SFTPA2, ABCA3, LAMP3, SLC34A2, NAPSA, PGC, LPCAT1]
+    source: "curated from lung atlas literature"
+  AT1_identity:
+    genes: [AGER, PDPN, HOPX, CLIC5, CAV1, EMP2, AKAP5, RTKN2]
+    source: "curated from lung atlas literature"
+  interferon_response:
+    genes: [ISG15, IFI6, IFIT1, IFIT3, MX1, MX2, OAS1, OAS2, STAT1, IRF7, BST2, IFI44L, IFITM3]
+    source: "MSigDB Hallmark Interferon Alpha/Gamma + curated"
+  nfkb_inflammatory:
+    genes: [NFKB1, RELA, TNF, IL6, IL1B, CXCL8, CCL2, ICAM1, PTGS2, SOD2, BIRC3, TNFAIP3]
+    source: "MSigDB Hallmark TNF-alpha/NF-kB + curated"
+  oxidative_stress:
+    genes: [SOD1, SOD2, GPX1, GPX4, CAT, TXN, HMOX1, NQO1, GCLC, GCLM, NFE2L2, PRDX1]
+    source: "MSigDB Hallmark Reactive Oxygen Species + curated"
+  AT2_to_AT1_differentiation:
+    genes: [KRT8, CLDN4, SFN, KRT18, LGALS3, HOPX, AGER, PDPN]
+    source: "Kobayashi et al. 2020, Strunz et al. 2020"
+  apoptosis:
+    genes: [BAX, BAK1, CASP3, CASP7, CASP9, BCL2L11, BID, PMAIP1, BBC3, CYCS, APAF1, FAS, FASLG]
+    source: "MSigDB Hallmark Apoptosis + curated pro-apoptotic"
+  senescence:
+    genes: [CDKN1A, CDKN2A, TP53, RB1, SERPINE1, GLB1, IGFBP7, CCL2, IL6, MMP1]
+    source: "SenMayo gene set + curated"
+
+# ---------------------------------------------------------------------------
+# Trajectory inference
+# ---------------------------------------------------------------------------
+trajectory:
+  method: "diffusion_pseudotime"    # primary; alternatives: palantir, monocle3
+  root_strategy: "healthy_AT2_centroid"
+  alternative_roots:
+    - "healthy_AT1_centroid"
+    - "random_healthy"
+    - "covid_extreme"
+  palantir:                          # secondary method
+    n_waypoints: 1200
+    num_trends: 5
+
+# ---------------------------------------------------------------------------
+# Batch correction
+# ---------------------------------------------------------------------------
+batch_correction:
+  method: "harmony"                  # primary; alternative: scvi
+  batch_key: "donor_id"             # verify column name after data inspection
+  harmony:
+    max_iter_harmony: 20
+    sigma: 0.1
+  scvi:
+    n_latent: 30
+    n_layers: 2
+    max_epochs: 200
+
+# ---------------------------------------------------------------------------
+# Statistical analysis
+# ---------------------------------------------------------------------------
+statistics:
+  pseudotime_test: "mann_whitney_u"
+  dispersion_test: "levene"
+  trend_method: "gam"               # generalized additive model for pseudotime trends
+  permutation_n: 1000               # permutations for null distributions
+  random_geneset_n: 100             # random gene sets for control scoring
+  fdr_method: "benjamini_hochberg"
+  alpha: 0.05
+
+# ---------------------------------------------------------------------------
+# Conditions
+# ---------------------------------------------------------------------------
+conditions:
+  healthy_label: "Control"          # SCP1219 `group` column: Control vs COVID-19
+  covid_label: "COVID-19"
+  condition_column: "group"         # SCP1219 metadata column
+
+# ---------------------------------------------------------------------------
+# Ablation specifications
+# ---------------------------------------------------------------------------
+ablations:
+  1_at2_only:
+    description: "AT2 cells only, excluding AT1 and transitional"
+    cell_types: ["AT2"]
+  2_embedding_comparison:
+    description: "PCA/UMAP vs diffusion map embedding"
+    methods: ["umap", "diffmap"]
+  3_batch_correction:
+    description: "With vs without donor/batch correction"
+    variants: ["corrected", "uncorrected"]
+  4_no_apoptosis_genes:
+    description: "Remove apoptosis genes before manifold construction"
+    remove_genes_from: "apoptosis"
+  5_root_sensitivity:
+    description: "Different pseudotime root cells"
+    roots: ["healthy_AT2_centroid", "healthy_AT1_centroid", "random_healthy", "covid_extreme"]
+  6_broader_epithelial:
+    description: "Include airway epithelial populations"
+    cell_types: ["AT1", "AT2", "Transitional", "Club", "Ciliated", "Basal"]
+  7_leave_one_donor_out:
+    description: "Systematic donor exclusion"
+    method: "iterate_all_donors"
+  8_alternative_gene_programs:
+    description: "Alternative gene program definitions"
+    source: "MSigDB only vs curated only"
+  9_alternative_trajectory:
+    description: "Palantir instead of DPT"
+    method: "palantir"
+  10_permutation_controls:
+    description: "Shuffled condition labels + random gene sets"
+    n_permutations: 1000
+
+# ---------------------------------------------------------------------------
+# Reproducibility
+# ---------------------------------------------------------------------------
+random_seed: 42
+n_jobs: 4

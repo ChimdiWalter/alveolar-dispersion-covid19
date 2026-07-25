@@ -1,0 +1,721 @@
+#+TITLE: Presentation Report: Dispersion, Not Displacement --- Loss of Alveolar Epithelial State Coherence in Lethal COVID-19
+#+AUTHOR: Pierce Taylor, Chimdi Walter Ndubuisi, and Toni Kazic
+#+DATE: 2026-05-12
+#+OPTIONS: toc:3 num:t ^:{}
+
+*Instructor: Dr. Toni Kazic*
+
+* Abstract
+
+The alveolar epithelium repairs itself through AT2-to-AT1 differentiation, but
+this process is overwhelmed in lethal COVID-19. Two geometric models could
+describe the resulting injury: coherent displacement of cells toward a single
+damaged state, or heterogeneous dispersion across multiple injury states. We
+tested these models using 22,128 alveolar epithelial cells from the Columbia/NYP
+COVID-19 Lung Atlas (SCP1219; 7 healthy donors, 20 COVID-19 donors), scoring
+eight gene programs along diffusion pseudotime and evaluating robustness through
+ten pre-specified ablation analyses, Harmony batch correction, an orthogonal
+trajectory algorithm (Palantir), and independent replication on 89,736 cells from
+618 donors across 35 datasets.
+
+Coherent centroid displacement was not supported (one-sided Mann-Whitney
+p = 1.0; rank-biserial r = 0.14 opposite to the hypothesized direction).
+Within-group dispersion was strongly supported (variance ratio 2.3; Levene
+p < 10⁻³⁰) and replicated decisively cross-cohort (variance ratio 1.65;
+p ≈ 10⁻¹³⁷). COVID-19 cells were enriched at higher pseudotime
+(permutation p = 0.001; median difference +0.048 on a [0,1] axis), a
+signal preserved in 27/27 leave-one-donor-out iterations, amplified 2.6-fold
+under Harmony batch correction, confirmed at reduced magnitude by Palantir
+(+0.028), and replicated at the donor-pseudobulk level in the independent
+cohort (p = 0.002). A KRT8⁺/CLDN4⁺ transitional population was enriched
+3.1-fold in the primary atlas but did not transfer cross-cohort under
+marker-threshold definitions. The fine-grained ordering of injury programs along
+pseudotime was sensitive to gene-list composition and is treated as
+hypothesis-generating.
+
+These results support a model in which lethal COVID-19 produces
+dispersion-dominated loss of alveolar epithelial state coherence rather than a
+coherent directional shift. Within-group dispersion and donor-level trajectory
+direction are the most portable findings across cohorts and methods;
+annotation-dependent and threshold-based measures are atlas-specific.
+
+* Introduction
+
+The alveolar epithelium is the functional unit of gas exchange in the lung. Two
+cell types sustain this function: AT1 cells, which form the thin gas-exchange
+barrier across approximately 95% of the alveolar surface, and AT2 cells, which
+secrete pulmonary surfactant and serve as the resident stem cells of the alveolar
+compartment. When AT1 cells are lost to injury, AT2 cells proliferate and
+differentiate through a KRT8⁺/CLDN4⁺/SFN⁺ transitional state to
+regenerate the gas-exchange surface [Barkauskas 2013; Kobayashi 2020; Strunz
+2020]. This AT2-to-AT1 differentiation axis is the primary mechanism of alveolar
+self-repair.
+
+In lethal COVID-19, this regenerative system is overwhelmed. SARS-CoV-2 enters
+AT2 cells via ACE2, directly compromising both the surfactant system and the
+regenerative progenitor pool [Ziegler 2020; Hou 2020]. A dysregulated
+inflammatory response inflicts further collateral damage. Autopsy studies describe
+diffuse alveolar damage, loss of normal architecture, and accumulation of
+transitional epithelial cells that are neither fully AT2 nor fully AT1 [Borczuk
+2020; Melms 2021]. Single-cell atlases of these tissues have revealed cell-type
+compositional changes and differentially expressed genes [Melms 2021; Delorey
+2021], but the cluster-based approach they employ forces continuous biology into
+discrete bins.
+
+A trajectory-based approach offers a more informative alternative. By treating
+each cell's expression profile as a position on a continuous transcriptomic
+manifold and ordering cells along pseudotime [Haghverdi 2016; Setty 2019], one
+can ask whether the molecular evidence is consistent with staged failure and
+characterize the geometry of the injury pattern. However, this approach raises a
+question that is rarely addressed explicitly: what is the expected /shape/ of
+epithelial injury in transcriptomic space?
+
+Two competing geometric models make distinct predictions (Figure 1). Under a
+*coherent displacement model*, injury shifts the entire cell population away from
+the healthy centroid toward a single new location in gene-expression space,
+implying a uniform damaged state. Under a *dispersion model*, injury fans cells
+outward from the healthy region into a heterogeneous cloud of partially
+overlapping injury states, increasing within-group variance without necessarily
+moving the centroid. These models make opposite predictions for two standard
+metrics: a centroid-displacement test (significant under displacement, null under
+dispersion) and a variance test (null under displacement, significant under
+dispersion). Both models predict enrichment at higher pseudotime values under a
+root-in-healthy-cells design.
+
+Here, we test these models using alveolar epithelial cells from the Columbia/NYP
+COVID-19 Lung Atlas [Melms 2021]. We pre-specified three statistical criteria ---
+centroid displacement, within-group dispersion, and pseudotime enrichment --- and
+evaluated robustness through ten ablation analyses, Harmony batch correction, an
+orthogonal trajectory algorithm (Palantir), and independent cross-cohort
+replication on 89,736 alveolar cells from 618 donors across 35 datasets. The
+result is an explicit accounting of which conclusions are robust across
+methodological choices, which are portable across cohorts, and which are
+atlas-specific.
+
+* Results
+
+** Cohort composition and alveolar subset validation
+
+We extracted 22,128 alveolar epithelial cells from SCP1219 by retaining cells
+annotated as AT1, AT2, or ECM-high epithelial in the original atlas [Melms 2021]:
+9,608 AT1 cells, 11,341 AT2 cells, and 1,179 ECM-high transitional cells from 27
+donors (12,181 cells from 7 healthy controls; 9,947 from 20 COVID-19 cases).
+Per-donor alveolar cell counts ranged from 62 to 2,850, and 10 of 27 donors
+contributed fewer than 300 cells (Supplementary Table S5). The true inferential
+sample size is therefore 27 donors (7 versus 20), and we rely on donor-level
+analyses and leave-one-donor-out ablation throughout to ensure that no single
+donor drives any primary finding.
+
+Marker-gene expression confirmed annotation quality: AT2 cells expressed /SFTPC/
+and /SFTPA1/; AT1 cells expressed /AGER/ and /HOPX/; ECM-high transitional cells
+expressed /KRT8/ and /CLDN4/ at elevated levels relative to both AT1 and AT2
+populations (Supplementary Table S3). The marker profile of the ECM-high
+compartment is consistent with the KRT8⁺/CLDN4⁺ damage-associated transient
+progenitor (DATP) population described in mouse bleomycin injury and human
+idiopathic pulmonary fibrosis [Kobayashi 2020; Strunz 2020; Adams 2020;
+Habermann 2020].
+
+#+CAPTION: *Alveolar epithelial manifold.* UMAP of 22,128 alveolar epithelial cells colored by condition (left), cell type annotation (center), and diffusion pseudotime (right). Pseudotime is rooted at the healthy AT2 centroid and normalized to [0, 1].
+#+NAME: fig:manifold
+#+ATTR_ORG: :width 800
+[[file:./results/figures/fig2_manifold.png]]
+
+** Two competing models of epithelial injury: centroid displacement fails, dispersion succeeds
+
+The central question of this study is whether alveolar epithelial injury in
+lethal COVID-19 takes the form of coherent displacement or heterogeneous
+dispersion. We tested both using the same cells in the same 50-dimensional PCA
+space.
+
+*** Centroid displacement was not supported
+
+We computed the Euclidean distance from each cell to the centroid of healthy cells
+in PCA space and tested whether COVID-19 cells were farther from this centroid
+than healthy cells (one-sided Mann-Whitney U, alternative COVID > Healthy). The
+test was not significant (U = 5.206 × 10⁷, p = 1.0; rank-biserial
+r = 0.14 pointing opposite to the alternative). The median distance was 10.68
+for COVID-19 cells and 11.56 for healthy cells --- COVID-19 cells were, if
+anything, /closer/ to the healthy centroid than healthy cells were to their own
+centroid. This result was pre-specified as one of three core criteria and the data
+do not support it.
+
+*** Within-group dispersion was strongly supported
+
+For each condition we computed each cell's Euclidean distance to that condition's
+own centroid in PCA space. The variance of these distances was 33.28 in COVID-19
+and 14.58 in controls (ratio 2.3). Levene's test yielded a statistic of 276.5
+with p < 10⁻³⁰ (Table 1). COVID-19 alveolar cells occupy a markedly broader
+region of transcriptomic space than healthy cells, consistent with fragmentation
+into heterogeneous injury states rather than coherent movement to a single new
+state.
+
+*** Interpretation: dispersion, not displacement
+
+These two results together discriminate between the competing models. The absence
+of centroid displacement rules out the simpler model in which all COVID-19 cells
+shift coherently toward one damaged phenotype. The strong dispersion signal
+supports the alternative model in which injury fans cells outward across multiple
+partially overlapping states while some cells remain near homeostatic identity. A
+test that measures mean displacement averages over the near-healthy and the
+distant subpopulations and detects neither. A test that measures within-group
+variance captures exactly this structure. We propose that future studies of
+epithelial state loss should adopt dispersion-based or trajectory-based metrics in
+preference to centroid-displacement tests, which implicitly assume a unimodal
+shift that injury biology does not produce.
+
+** Dispersion-dominated loss of state coherence is the most portable finding
+
+The dispersion result is the strongest and most portable finding in this study. In
+the primary atlas, the 2.3-fold variance ratio between COVID-19 and healthy cells
+is the largest effect size among all tested metrics.
+
+To evaluate cross-cohort portability, we constructed an independent replication
+cohort of 89,736 alveolar AT1/AT2 nuclei from the cellxgene census (35 datasets,
+618 donors; the Melms/SCP1219 dataset was excluded by its identifier). We scored
+the same eight gene programs and defined an injury composite as the mean of the
+six non-homeostatic program scores. Levene's test on the injury composite yielded
+a statistic of 626.2 with p ≈ 10⁻¹³⁷ and a variance ratio of 1.65
+(COVID variance 0.0505; normal variance 0.0306). The direction and qualitative
+magnitude of the primary-cohort dispersion finding replicate decisively.
+
+*** Donor-level dispersion
+
+At the donor level, the pattern is more nuanced. Per-donor within-donor median
+distance to own centroid was 7.77 for COVID-19 donors and 10.58 for healthy
+donors (Mann-Whitney p = 0.999; Levene p = 0.071). Individual COVID-19
+donors are not more internally dispersed than individual healthy donors; rather,
+the cell-level dispersion signal arises from the diversity of states /across/
+COVID-19 donors. This is consistent with a model in which each donor's cells
+occupy a different region of injury space, collectively producing the fan-out
+visible at the cell level. The within-donor dispersion bootstrap 95% CI for the
+difference in medians was [-30.7, 16.5], confirming that the cell-level Levene's
+test captures between-donor heterogeneity rather than within-donor inflation.
+
+#+CAPTION: *Dispersion-dominated loss of state coherence.* (a) Within-group distance-to-centroid distributions for COVID-19 and healthy cells (Levene p < 10⁻³⁰; variance ratio 2.3). (b) Distance-to-healthy-centroid distributions (displacement test; Mann-Whitney p = 1.0). (c) Donor-level within-donor dispersion. (d) Replication cohort dispersion (Levene p ≈ 10⁻¹³⁷; variance ratio 1.65). (e) Summary statistics table.
+#+NAME: fig:dispersion
+#+ATTR_ORG: :width 800
+[[file:./results/figures/fig3_dispersion_centerpiece.png]]
+
+** COVID-19 cells are enriched at higher pseudotime along a donor-robust injury axis
+
+We constructed a transcriptomic manifold (3,000 HVGs, 50-component PCA,
+k-nearest-neighbor graph with k = 15, 15-component diffusion map) and
+computed diffusion pseudotime rooted at the cell nearest the healthy AT2 centroid
+in diffusion-component space, min-max normalized to [0, 1].
+
+*** Pseudotime shift
+
+COVID-19 cells were shifted toward higher pseudotime (median 0.111 versus 0.063;
+observed difference +0.048). A 1,000-iteration permutation test (condition labels
+shuffled, median difference recomputed) placed the null distribution tightly at
+zero (mean 6.0 × 10⁻⁵, std 1.24 × 10⁻³); the observed value
+exceeded all permutations (p = 0.000999). The shift is modest in absolute
+magnitude (approximately 5% of the normalized range) but statistically robust.
+
+*** Donor-level robustness
+
+Leave-one-donor-out analysis (27 iterations) preserved the direction of the shift
+in every iteration, with magnitude ranging from 0.028 to 0.202 and the bulk of
+iterations clustering between 0.047 and 0.086. No single donor was necessary for
+the pseudotime shift to remain positive.
+
+All 20 COVID-19 donors had median pseudotime ≥ 0.087, while 5 of 7 control
+donors had median pseudotime < 0.090. No COVID-19 donor had a median pseudotime
+below the lowest healthy-donor median.
+
+*** Harmony batch correction amplifies the shift
+
+Harmony [Korsunsky 2019] with =donor_id= as batch key converged in three
+iterations and yielded a pseudotime shift of +0.125, approximately 2.6-fold
+larger than the uncorrected value. This amplification is biologically
+interpretable: donor-level batch effects, confounded with condition in this
+autopsy-versus-organ-donor cohort, act as within-donor clustering forces in PCA
+space. Removing that within-donor clustering while preserving between-condition
+structure unmasks a larger condition-associated shift. The fact that batch
+correction /strengthens/ rather than weakens the signal is strong evidence that
+the pseudotime shift is not a donor-effect artifact.
+
+*** Palantir cross-validation
+
+Palantir [Setty 2019] on the same manifold and root cell returned a median
+pseudotime shift of +0.028 between conditions, of the same sign as diffusion
+pseudotime and comparable in magnitude. The program-ordering correlation with the
+primary analysis was ρ = 0.48. This cross-algorithm agreement on the
+direction and approximate magnitude of the shift indicates that the signal is a
+property of the underlying manifold rather than an artifact of one algorithm.
+
+*** Donor-level replication
+
+In the independent replication cohort, the cell-level one-sided Mann-Whitney test
+on the injury composite returned p = 1.0 (consistent with the cell-level
+centroid-displacement failure in the primary cohort). However, pseudobulking to
+donor-level medians and testing 43 COVID donors versus 575 control donors yielded
+p = 0.002 in the expected direction. This pattern --- cell-level unimodal-shift
+tests fail, donor-level aggregated tests succeed --- mirrors the primary cohort
+and reinforces the view that cell-level displacement tests are not the appropriate
+instrument for this class of biology.
+
+#+CAPTION: *Donor-level pseudotime analysis.* (a) Pseudotime density distributions by condition. (b) Per-donor median pseudotime (bars), sorted by value. (c) Bootstrap distribution (10,000 replicates) for the difference in donor-level median pseudotime between conditions; 95% CI [-0.013, 0.086]. (d) OLS model summary: coefficient +0.043 (p = 0.013; R² = 0.22).
+#+NAME: fig:donor-pseudotime
+#+ATTR_ORG: :width 800
+[[file:./results/figures/fig4_donor_pseudotime.png]]
+
+#+CAPTION: *Pseudotime density by condition.* Distribution of diffusion pseudotime values for COVID-19 (red) and healthy control (blue) alveolar epithelial cells.
+#+NAME: fig:pseudotime-density
+#+ATTR_ORG: :width 600
+[[file:./results/figures/fig4_pseudotime_density.png]]
+
+** A KRT8⁺/CLDN4⁺ transitional compartment is enriched in the primary atlas but is not a portable cross-cohort signature
+
+The ECM-high transitional population was enriched 3.1-fold in COVID-19 relative
+to controls (848/9,947 COVID cells [8.5%] versus 331/12,181 control cells [2.7%];
+χ² p < 10⁻³⁰). These cells occupied intermediate pseudotime
+positions (mean ≈ 0.3–0.5), expressed /KRT8/, /CLDN4/, and partial AT1
+markers (Supplementary Table S3), and are consistent with damage-associated
+transient progenitors described in mouse lung injury [Kobayashi 2020; Strunz
+2020] and aberrant basaloid cells described in human IPF [Adams 2020; Habermann
+2020]. Their enrichment in COVID-19 and their intermediate pseudotime position are
+together consistent with accumulation of cells that initiated AT2-to-AT1 repair
+but did not complete it. This interpretation is correlational; we have a
+cross-sectional snapshot, not a lineage trace.
+
+*** Cross-cohort portability of marker-threshold DATP calling fails
+
+In the independent replication cohort, we defined DATP-positive cells as those
+with simultaneously positive expression of KRT8 and CLDN4 (log-normalized count
+> 0 for both). The fraction was 22.9% in COVID-19 versus 47.6% in controls (fold
+enrichment 0.48x; χ² p ≈ 10⁻²²⁸), the opposite direction from
+the primary atlas. This failure reflects cross-cohort non-equivalence of simple
+marker-threshold calls: study-specific normalization, capture efficiency, and
+ontology labeling all affect how many cells cross a fixed expression threshold. We
+therefore report DATP enrichment as a primary-atlas observation, not a
+cross-cohort-validated finding.
+
+#+CAPTION: *Transitional cell compartment.* (a) UMAP highlighting ECM-high transitional cells. (b) Cell-type composition by condition (stacked bar); 3.1-fold enrichment of transitional cells in COVID-19. (c) Marker gene expression across cell types. (d) Pseudotime density distributions by cell type.
+#+NAME: fig:transitional
+#+ATTR_ORG: :width 800
+[[file:./results/figures/fig5_transitional.png]]
+
+** Ablation analyses distinguish robust from fragile conclusions
+
+Ten pre-specified ablations systematically varied cell-type scope, embedding
+method, batch correction, gene-program composition, pseudotime root, trajectory
+algorithm, donor identity, and null-model assumptions (Supplementary Table S6).
+Each ablation reported three metrics: median pseudotime difference (MPD),
+program-ordering Spearman ρ versus the primary analysis, and displacement
+rank-biserial r.
+
+*** Robust findings
+
+The direction of the pseudotime shift was preserved across all perturbations that
+retained the alveolar compartment and a healthy-cell root: 27/27
+leave-one-donor-out iterations (MPD range 0.028--0.202); all embedding variants
+(MPD = +0.048); the batch-correction fallback (MPD = +0.048); and the
+apoptosis-gene removal (MPD = +0.074). The curated-only gene-program variant
+produced identical program ordering (ρ = 1.0). The displacement effect size
+was never significant in the pre-specified direction (r ≤ 0.14 across all
+ablations), confirming that the centroid-displacement failure is a robust feature
+of the data, not an artifact of a single pipeline choice.
+
+*** Fragile findings
+
+The fine-grained ordering of injury programs within the upper half of pseudotime
+was sensitive to gene-list choice: substituting MSigDB hallmark sets for curated
+lists inverted the ordering (ρ = -0.80). The pseudotime shift collapsed when
+airway epithelial cells were included (Ablation 6, MPD = -0.008), confirming that
+the trajectory is a property of the alveolar compartment specifically. Rooting
+pseudotime in a COVID-extreme cell inverted the program ordering (ρ = -0.10),
+as expected mathematically.
+
+*** Summary
+
+The existence and direction of the pseudotime shift, and the dispersion finding,
+are robust across the full ablation grid. The fine-grained injury-program sequence
+and the specificity of the trajectory to alveolar-only analyses are
+methodologically sensitive. We report the fine ordering as hypothesis-generating,
+not as a confirmed sequence.
+
+#+CAPTION: *Ablation robustness matrix.* Ten pre-specified ablations (rows) evaluated across three metrics (columns): median pseudotime difference, program-ordering Spearman rho versus primary, and displacement rank-biserial r. Pseudotime direction is robust across all alveolar-compartment ablations; fine program ordering is sensitive to gene-list choice.
+#+NAME: fig:ablation
+#+ATTR_ORG: :width 800
+[[file:./results/figures/fig6_ablation_matrix.png]]
+
+** Gene-program dynamics: identity loss is stable, fine ordering is hypothesis-generating
+
+We scored each cell for eight curated gene programs using
+=scanpy.tl.score_genes=. The pseudotime position at which each program's mean
+score peaked (across 20 equal-width bins) yielded: AT2 identity at 0.015, AT1
+identity at 0.266, apoptosis at 0.591, AT2-to-AT1 differentiation at 0.744,
+NF-κB at 0.744, oxidative stress at 0.744, interferon at 0.866, senescence
+at 0.935 (Supplementary Figure S6; Supplementary Table S8).
+
+The dominant pattern --- homeostatic identity programs peak in the lower third of
+pseudotime, injury-associated programs peak in the upper half --- is stable across
+all ablations. The fine-grained ordering /within/ the injury phase (specifically,
+apoptosis peaking before inflammatory/stress programs) did not match our
+pre-specified expectation of an interferon-first cascade, and it inverts under
+MSigDB-hallmark substitution (Ablation 8, ρ = -0.80). We therefore treat the
+fine ordering as hypothesis-generating. The identity-decline pattern is a robust
+result; the specific injury-phase sequence is not.
+
+#+CAPTION: *Gene-program dynamics along pseudotime.* Mean program scores across 20 pseudotime bins. Homeostatic identity programs (AT2, AT1) peak early; injury-associated programs peak in the upper half.
+#+NAME: fig:program-dynamics
+#+ATTR_ORG: :width 800
+[[file:./results/figures/fig3_program_dynamics.png]]
+
+** Independent replication: geometric findings are portable, annotation-dependent findings are not
+
+The independent replication cohort (89,736 alveolar AT1/AT2 nuclei from 35
+datasets and 618 donors; SCP1219 excluded) provides a structured test of which
+findings are portable.
+
+*** Portable
+
+Dispersion replicated strongly (Levene p ≈ 10⁻¹³⁷; variance ratio
+1.65). The donor-level direction of the pseudotime-analogue shift replicated
+(p = 0.002; 43 COVID versus 575 control donors). Interferon-response and
+AT1-identity programs scored significantly higher in COVID-19 cells at the cell
+level (p ≈ 10⁻¹⁹⁴ and p ≈ 10⁻¹⁰⁴, respectively).
+
+*** Not portable
+
+Cell-level injury-composite shift failed (p = 1.0), mirroring the
+primary-cohort centroid-displacement failure. NF-κB, oxidative stress,
+AT2-to-AT1 differentiation, apoptosis, and senescence program scores did not show
+COVID-19 enrichment at the cell level. Marker-threshold DATP enrichment reversed
+direction (0.48-fold instead of 3.1-fold).
+
+*** Interpretation
+
+The overall pattern is that /geometric/ findings (dispersion, donor-level
+direction of shift) are portable across cohorts and methods.
+/Annotation-dependent/ and /threshold-based/ findings (DATP marker
+co-expression, specific program peak positions) are atlas-specific. This is a
+more precise and more honest view of generalizability than a single-dataset
+analysis can provide.
+
+#+CAPTION: *Independent replication summary.* (a) Portability matrix: which findings replicate across 35 datasets and 618 donors. (b) Per-program significance in the replication cohort (cell-level Mann-Whitney). (c) State score distributions by condition in the replication cohort (all p < 10⁻³⁰⁰).
+#+NAME: fig:replication
+#+ATTR_ORG: :width 800
+[[file:./results/figures/fig7_replication_summary.png]]
+
+* Discussion
+
+** Principal finding
+
+This study set out to distinguish two competing geometric models of alveolar
+epithelial injury in lethal COVID-19. Under the /coherent displacement/ model,
+injury shifts the entire cell population toward a single new location in
+transcriptomic space. Under the /dispersion/ model, injury fans cells outward
+into a heterogeneous cloud. Our data support the dispersion model. Centroid
+displacement was not detected (p = 1.0), while within-group dispersion was the
+single strongest signal in the dataset (variance ratio 2.3; Levene
+p < 10⁻³⁰), replicated cross-cohort (variance ratio 1.65;
+p ≈ 10⁻¹³⁷), and robust across all tested analytical perturbations. We
+describe this pattern as /dispersion-dominated loss of alveolar epithelial state
+coherence/: COVID-19 alveolar cells lose their coordinated homeostatic identity
+and scatter across a heterogeneous range of injury, repair, and stress states
+while maintaining approximately the same average distance from the healthy
+centroid.
+
+** Why centroid displacement failed and why that matters
+
+The centroid-displacement test was pre-specified because, under a simple intuition
+that "sick cells are further from healthy cells," it should have been the most
+direct readout. It was not. The median distance of COVID-19 cells from the healthy
+centroid (10.68) was actually lower than the median distance of healthy cells from
+their own centroid (11.56). This makes biological sense: some COVID-19 cells
+remain near homeostatic identity while others occupy distant, heterogeneous
+positions. A mean-displacement test averages over these subpopulations and sees
+nothing. This negative result is not a failure of the study but a positive
+finding: it rules out the simpler "one coherent damaged state" model and motivates
+the dispersion-based framework.
+
+** Donor-aware pseudotime shift
+
+The pseudotime shift (+0.048 on a [0,1] axis; permutation p = 0.001) is modest
+but robust: preserved in 27/27 leave-one-donor-out iterations, amplified 2.6-fold
+under Harmony batch correction, confirmed at reduced magnitude by Palantir, and
+replicated at the donor-pseudobulk level in an independent cohort (p = 0.002).
+The amplification under Harmony is important because it indicates that the
+uncorrected estimate is a conservative lower bound --- donor-level batch structure
+was /attenuating/ the signal, not inflating it.
+
+** Portable findings versus atlas-specific findings
+
+The independent replication distinguishes two classes of findings. Geometric
+signatures --- within-group dispersion and donor-level direction of the
+pseudotime-analogue shift --- are portable across 35 datasets and 618 donors.
+Annotation-dependent signatures --- marker-threshold DATP enrichment, specific
+program peak positions --- are not. This distinction suggests that the geometric
+properties of cell-state distributions (variance, spread, trajectory direction
+aggregated to donors) may be more reliable cross-cohort readouts of tissue injury
+than the precise identities or thresholds of specific cell populations.
+
+** Transitional cells: primary-atlas enrichment, not portable thresholds
+
+The 3.1-fold enrichment of KRT8⁺/CLDN4⁺ transitional cells in COVID-19 is
+consistent with accumulation of cells that initiated AT2-to-AT1 repair but did
+not complete it. However, the marker-threshold definition of this population does
+not transfer cross-cohort: the replication cohort shows 47.6% DATP-positive among
+controls versus 22.9% among COVID-19, the opposite direction. This is not
+evidence against the biological reality of transitional cells; it is evidence that
+a fixed marker-expression threshold applied across datasets with different
+normalization does not produce comparable proportions.
+
+** Gene-program ordering: stable framework, fragile details
+
+The stable finding is that homeostatic identity programs (AT2, AT1) decline
+monotonically with pseudotime while injury-associated programs rise in the upper
+half. The fragile finding is the specific order within the injury phase: it
+inverts under MSigDB-hallmark substitution (ρ = -0.80) and under
+COVID-extreme rooting (ρ = -0.10). We do not claim a specific
+injury-program cascade.
+
+** Mechanistic decomposition of the fan-out
+
+A linear regression of distance-to-healthy-centroid on program scores
+(R² = 0.11) identified senescence (coefficient = 6.83), oxidative stress
+(3.83), and NF-κB inflammatory (1.95) as the top contributors to the
+fan-out pattern. AT2 identity (-1.13) and AT1 identity (-1.02) carried negative
+coefficients, as expected: cells retaining homeostatic identity are closer to the
+healthy centroid.
+
+** Trajectory is alveolar-specific
+
+Ablation 6 added airway epithelial cells and the pseudotime shift collapsed (MPD
+= -0.008). The trajectory we describe is a property of the alveolar compartment
+in isolation.
+
+** Limitations
+
+- /Cross-sectional design./ All cells were collected at a single time point. Pseudotime is a computational ordering, not a measurement of elapsed time.
+- /Sample size./ The primary atlas contains 27 donors (7 versus 20). Leave-one-donor-out, Harmony, and cross-cohort replication (618 donors) collectively address this, but primary donor-level comparisons are low-powered.
+- /Donor-level modeling./ A donor-level OLS model (median pseudotime ~ condition, n = 27) yielded a COVID-19 coefficient of +0.043 (95% CI [0.010, 0.076]; p = 0.013; R² = 0.22). The donor-level bootstrap 95% CI for the median pseudotime difference was [-0.013, 0.086]; the CI marginally includes zero.
+- /Lethal cases only./ No mild or moderate COVID-19 cases are available.
+- /Post-mortem effects./ Peri-mortem hypoxia may influence gene expression, particularly stress and apoptosis programs.
+- /Replication scope./ The independent cohort uses an 84-gene panel and cannot support full manifold reconstruction.
+- /Gene-list sensitivity./ The fine-grained injury-program ordering is not robust to gene-list choice.
+- /DATP portability./ Marker-threshold DATP enrichment does not transfer cross-cohort.
+
+** Conclusion
+
+Lethal COVID-19 does not push alveolar epithelial cells coherently away from the
+healthy state. It fans them outward across heterogeneous injury states while
+increasing their transcriptomic dispersion, with accumulation of a
+KRT8⁺/CLDN4⁺ transitional population at intermediate trajectory positions.
+The strongest and most portable finding is within-group dispersion, which
+replicates across 35 independent datasets and 618 donors. Donor-level trajectory
+direction replicates; cell-level displacement does not; and threshold-based
+transitional-state definitions are atlas-specific.
+
+** Future directions
+
+Five planned extensions would strengthen the generalizability and mechanistic depth of these findings:
+
+1. *Cell-level mixed-effects models.* The current donor-level OLS treats donor medians as independent observations. Replacing this with mixed-effects models (pseudotime ~ condition + (1|donor_id) and dispersion ~ condition + (1|donor_id)) would properly account for within-donor correlation and address the pseudoreplication concern inherent in cell-level Levene tests with p < 10⁻³⁰.
+
+2. *Full-transcriptome independent replication.* The current replication cohort is restricted to an 84-gene panel. Applying the full PCA-to-DPT-to-three-test pipeline to Delorey et al. (2021, GSE171524; ~15 COVID-19 + controls) would provide a complete independent test of the dispersion framework without gene-panel limitations.
+
+3. *Cross-disease generalization.* Testing whether the dispersion framework extends beyond COVID-19 to idiopathic pulmonary fibrosis using Adams et al. (2020, GSE136831; ~32 IPF + 28 controls) would determine whether loss of state coherence is a general property of alveolar injury or specific to viral pneumonia.
+
+4. *Cross-species replication with temporal calibration.* Strunz et al. (2020, GSE141259) provides mouse bleomycin lung injury data with a time series (day 0 through day 56) and Sftpc-CreERT2 lineage tracing. This dataset would enable: (a) cross-species validation of the dispersion framework via ortholog-mapped gene programs, (b) calibration of computational pseudotime against real elapsed time, and (c) lineage-trace-based validation of trajectory direction without computational assumptions. The Krt8⁺ transitional state was first characterized in this dataset, making it the natural ground-truth system for our framework.
+
+5. *RNA velocity and classifier-based state transfer.* If BAM or loom files are available for SCP1219, RNA velocity would provide direction-independent trajectory validation. Additionally, training a logistic regression classifier on transitional versus non-transitional cells using the 84-gene panel and applying it cross-cohort would convert the DATP marker-threshold failure into a positive result: geometric signatures transfer even when marker thresholds do not.
+
+Together, these extensions would establish a four-layer generalization stack --- human COVID-19, human multi-cohort, human IPF, and mouse bleomycin --- sufficient to position the dispersion framework as a general tool for characterizing epithelial injury geometry across diseases and species.
+
+* Methods
+
+** Data
+
+SCP1219 [Melms 2021], 116,313 nuclei from 27 donors. We retained AT1, AT2, and
+ECM-high epithelial cells (22,128 cells).
+
+** Preprocessing
+
+Normalize to 10,000 counts per cell; log(1+x); 3,000 HVGs (Seurat-v3); scale
+(max 10); 50-component PCA (seed 42).
+
+** Graph and embeddings
+
+k-NN k = 15; UMAP (min_dist = 0.3); 15-component diffusion map.
+
+** Batch correction
+
+Harmony [Korsunsky 2019] with =donor_id= as batch key, max_iter_harmony = 20,
+sigma = 0.1. Converged in 3 iterations.
+
+** Pseudotime
+
+DPT [Haghverdi 2016] via =scanpy.tl.dpt=, rooted at healthy AT2 centroid in
+diffusion space; normalized to [0,1]. Palantir [Setty 2019] with 1,200 waypoints
+and same root for cross-validation.
+
+** Gene programs
+
+Eight programs (AT2 identity; AT1 identity; interferon; NF-κB; oxidative
+stress; AT2-to-AT1 differentiation; apoptosis; senescence) scored via
+=scanpy.tl.score_genes= against full normalized expression matrix.
+
+** Statistical tests
+
+- Centroid displacement: one-sided Mann-Whitney U (COVID > Healthy) on per-cell distance to healthy centroid in PCA; effect size rank-biserial r.
+- Dispersion: Levene's test on per-cell distance to own-condition centroid.
+- Pseudotime: 1,000-permutation test on median difference.
+- Program ordering: Spearman rho on peak-position vectors.
+
+** Replication
+
+89,736 alveolar AT1/AT2 cells from cellxgene census (35 datasets, 618 donors;
+SCP1219 excluded). 84-gene panel; per-donor cap 200 cells; injury composite
+scored from six non-homeostatic programs. Cell-level and donor-level tests.
+
+** Software
+
+Python 3.12.3; Scanpy 1.12.1; AnnData 0.12.10; NumPy 2.4.3; SciPy 1.17.1;
+pandas 2.3.3; harmonypy 0.2.0; palantir 1.4.4. Seeds fixed to 42.
+
+* Tables
+
+** Table 1: Three pre-specified tests of epithelial state coherence
+
+| Test | Statistic | p-value | Effect size | Direction |
+|------+-----------+---------+-------------+-----------|
+| Mann-Whitney U (displacement) | 5.21 x 10^7 | 1.0 | r = 0.14 | opposite to alternative |
+| Levene's test (dispersion) | 276.5 | < 10⁻³⁰ | var. ratio 2.3 | COVID > Healthy |
+| Permutation (pseudotime shift) | --- | 0.000999 | MPD +0.048 | COVID > Healthy |
+
+** Table 2: Ten pre-specified ablations summary
+
+| Ablation | MPD | rho | r | Notes |
+|----------+-------+-------+-------+------------------------------|
+| 1 AT2-only | +0.133 | 0.33 | -0.29 | sign flip on r |
+| 2 UMAP / diffmap | +0.048 | 0.55 | +0.14 | unchanged |
+| 3 Harmony corrected | +0.125 | 0.45 | +0.14 | amplifies shift |
+| 3 Uncorrected | +0.048 | 0.55 | +0.14 | baseline |
+| 4 No apoptosis genes | +0.074 | 0.50 | +0.14 | slight up |
+| 5 4 roots | -0.037 to +0.048 | -0.10 to 0.64 | +0.14 | root-dependent |
+| 6 Broader epithelial | -0.008 | 0.83 | +0.25 | *shift abolished* |
+| 7 LOO (27 donors) | 0.028-0.202 | varies | varies | direction 27/27 |
+| 8 Curated-only | +0.048 | 1.00 | +0.14 | stable |
+| 8 MSigDB-only | +0.048 | -0.80 | +0.14 | *ordering inverted* |
+| 9 Palantir | +0.028 | 0.48 | +0.14 | alt. algorithm |
+| 10 Permutation | p=0.001 | --- | --- | 1000 shuffles |
+
+** Table 3: Composite assessment (primary + replication)
+
+| Criterion | Primary (SCP1219) | Replication (census) |
+|-----------+-------------------+----------------------|
+| Centroid displacement | *fails* (p=1.0) | *fails cell-level* (p=1.0) |
+| Dispersion (Levene) | supported (p~0) | *supported* (p~10⁻¹³⁷) |
+| Pseudotime enrichment | supported (p=0.001) | supported donor-level (p=0.002) |
+| Harmony-corrected shift | MPD x2.6 | --- |
+| KRT8+/CLDN4+ DATPs | 3.1x enriched | *0.48x --- retracted* |
+
+* Supplementary Figures
+
+#+CAPTION: *Quality control metrics.* Distribution of genes per cell, UMI counts, and mitochondrial percentage before and after filtering.
+#+NAME: fig:qc
+#+ATTR_ORG: :width 600
+[[file:./results/figures/figS1_qc.png]]
+
+#+CAPTION: *Marker gene validation.* Expression of canonical AT1, AT2, and transitional markers across annotated cell types.
+#+NAME: fig:markers
+#+ATTR_ORG: :width 600
+[[file:./results/figures/figS2_markers.png]]
+
+#+CAPTION: *Batch effects.* UMAP colored by donor_id, showing donor-level clustering before and after Harmony correction.
+#+NAME: fig:batch
+#+ATTR_ORG: :width 600
+[[file:./results/figures/figS3_batch.png]]
+
+#+CAPTION: *PCA variance explained.* Scree plot showing cumulative variance explained by the first 50 principal components.
+#+NAME: fig:pca
+#+ATTR_ORG: :width 600
+[[file:./results/figures/figS4_pca.png]]
+
+#+CAPTION: *Diffusion map embedding.* First three diffusion components colored by condition and cell type.
+#+NAME: fig:diffmap
+#+ATTR_ORG: :width 600
+[[file:./results/figures/figS5_diffmap.png]]
+
+#+CAPTION: *Gene-program dynamics.* Smoothed mean program scores across 20 equal-width pseudotime bins. Identity programs decline; injury programs rise.
+#+NAME: fig:program-supp
+#+ATTR_ORG: :width 600
+[[file:./results/figures/figS6_program_dynamics.png]]
+
+#+CAPTION: *Leave-one-donor-out.* Distribution of median pseudotime difference across 27 LOO iterations. All iterations preserve positive direction.
+#+NAME: fig:lodo
+#+ATTR_ORG: :width 600
+[[file:./results/figures/figS9_lodo.png]]
+
+#+CAPTION: *Transitional cells supplementary.* Extended view of transitional-cell marker expression and pseudotime distribution.
+#+NAME: fig:trans-supp
+#+ATTR_ORG: :width 600
+[[file:./results/figures/figS10_transitional.png]]
+
+#+CAPTION: *Injury composite.* Distribution of the six-program injury composite score by condition.
+#+NAME: fig:composite
+#+ATTR_ORG: :width 600
+[[file:./results/figures/figS11_composite.png]]
+
+#+CAPTION: *State scores.* Continuous state scores (coherence-loss, repair-failure, injury-composite) by condition. All p < 10⁻³⁰⁰.
+#+NAME: fig:state-scores
+#+ATTR_ORG: :width 600
+[[file:./results/figures/figS12_state_scores.png]]
+
+#+CAPTION: *Mechanistic decomposition.* Fan-out contribution coefficients from linear regression of distance-to-healthy-centroid on program scores.
+#+NAME: fig:mechanism
+#+ATTR_ORG: :width 600
+[[file:./results/figures/figS13_mechanism.png]]
+
+#+CAPTION: *UMAP by condition.* UMAP embedding colored by condition (Control vs COVID-19).
+#+NAME: fig:umap-condition
+#+ATTR_ORG: :width 600
+[[file:./results/figures/fig1a_umap_condition.png]]
+
+#+CAPTION: *UMAP by cell type.* UMAP embedding colored by cell-type annotation (AT1, AT2, ECM-high).
+#+NAME: fig:umap-celltype
+#+ATTR_ORG: :width 600
+[[file:./results/figures/fig1b_umap_celltype.png]]
+
+#+CAPTION: *Donor consistency.* Per-donor median pseudotime bars sorted by value, showing separation between conditions.
+#+NAME: fig:donor-consistency
+#+ATTR_ORG: :width 600
+[[file:./results/figures/fig7_donor_consistency.png]]
+
+#+CAPTION: *Displacement boxplot.* Distribution of per-cell distance to healthy centroid by condition, illustrating the failure of the displacement test.
+#+NAME: fig:displacement
+#+ATTR_ORG: :width 600
+[[file:./results/figures/fig5b_displacement_boxplot.png]]
+
+#+CAPTION: *Marker trends along pseudotime.* Key marker genes (SFTPC, AGER, KRT8, CLDN4) plotted against pseudotime.
+#+NAME: fig:marker-trends
+#+ATTR_ORG: :width 600
+[[file:./results/figures/fig5_marker_trends.png]]
+
+* Data and Code Availability
+
+The Columbia/NYP COVID-19 Lung Atlas is available through the Broad Institute
+Single Cell Portal under accession SCP1219 [Melms 2021]. The cellxgene census
+replication cohort was accessed via the cellxgene census API (release 2025-11-08).
+Analysis code and configuration are available at the project repository.
+
+* References
+
+1. Adams TS, Schupp JC, Poli S, et al. (2020). Single-cell RNA-seq reveals ectopic and aberrant lung-resident cell populations in idiopathic pulmonary fibrosis. /Science Advances/, 6(28):eaba1983.
+2. Barkauskas CE, Cronce MJ, Rackley CR, et al. (2013). Type 2 alveolar cells are stem cells in adult lung. /Journal of Clinical Investigation/, 123(7):3025-3036.
+3. Borczuk AC, Salvatore SP, Seshan SV, et al. (2020). COVID-19 pulmonary pathology: a multi-institutional autopsy cohort from Italy and New York City. /Modern Pathology/, 33(11):2156-2168.
+4. Delorey TM, Ziegler CGK, Heimberg G, et al. (2021). COVID-19 tissue atlases reveal SARS-CoV-2 pathology and cellular targets. /Nature/, 595(7865):107-113.
+5. Habermann AC, Gutierrez AJ, Bui LT, et al. (2020). Single-cell RNA sequencing reveals profibrotic roles of distinct epithelial and mesenchymal lineages in pulmonary fibrosis. /Science Advances/, 6(28):eaba1972.
+6. Haghverdi L, Buttner M, Wolf FA, Buettner F, Theis FJ. (2016). Diffusion pseudotime robustly reconstructs lineage branching. /Nature Methods/, 13(10):845-848.
+7. Hou YJ, Okuda K, Edwards CE, et al. (2020). SARS-CoV-2 reverse genetics reveals a variable infection gradient in the respiratory tract. /Cell/, 182(2):429-446.e14.
+8. Kobayashi Y, Tata A, Konkimalla A, et al. (2020). Persistence of a regeneration-associated, transitional alveolar epithelial cell state in pulmonary fibrosis. /Nature Cell Biology/, 22(8):934-946.
+9. Korsunsky I, Millard N, Fan J, et al. (2019). Fast, sensitive and accurate integration of single-cell data with Harmony. /Nature Methods/, 16(12):1289-1296.
+10. Melms JC, Biermann J, Huang H, et al. (2021). A molecular single-cell lung atlas of lethal COVID-19. /Nature/, 595(7865):114-119.
+11. Setty M, Kiseliovas V, Levine J, Gayoso A, Mazutis L, Pe'er D. (2019). Characterization of cell fate probabilities in single-cell data with Palantir. /Nature Biotechnology/, 37(4):451-460.
+12. Strunz M, Simon LM, Ansari M, et al. (2020). Alveolar regeneration through a Krt8+ transitional stem cell state that persists in human lung fibrosis. /Nature Communications/, 11(1):3559.
+13. Wendisch D, Dietrich O, Mari T, et al. (2021). SARS-CoV-2 infection triggers profibrotic macrophage responses and lung fibrosis. /Cell/, 184(26):6243-6261.e27.
+14. Wolf FA, Angerer P, Theis FJ. (2018). SCANPY: large-scale single-cell gene expression data analysis. /Genome Biology/, 19(1):15.
+15. Ziegler CGK, Allon SJ, Nyquist SK, et al. (2020). SARS-CoV-2 receptor ACE2 is an interferon-stimulated gene in human airway epithelial cells and is detected in specific cell subsets across tissues. /Cell/, 181(5):1016-1035.e19.

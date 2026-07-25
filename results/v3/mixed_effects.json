@@ -1,0 +1,9 @@
+{
+  "model": "OLS (donor-level, no random effect needed for n=27)",
+  "coefficient_is_covid": 0.04262781984039718,
+  "p_value_is_covid": 0.013237547529850327,
+  "ci_lower": 0.009705833708587484,
+  "ci_upper": 0.07554980597220687,
+  "r_squared": 0.22145986758407166,
+  "n_obs": 27
+}

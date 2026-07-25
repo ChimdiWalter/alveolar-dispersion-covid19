@@ -1,0 +1,94 @@
+{
+  "bins": [
+    {
+      "bin": 0,
+      "pt_lo": 0.0,
+      "pt_hi": 0.1,
+      "condition": "Control",
+      "n_cells": 7122,
+      "mean_differentiation": -0.10210238010214649,
+      "mean_apoptosis": -0.013498826794929631,
+      "diff_apop_ratio": 7.564356963040937
+    },
+    {
+      "bin": 0,
+      "pt_lo": 0.0,
+      "pt_hi": 0.1,
+      "condition": "COVID-19",
+      "n_cells": 3800,
+      "mean_differentiation": -0.08011156163250312,
+      "mean_apoptosis": 0.0005320180421556926,
+      "diff_apop_ratio": -150.29802989127117
+    },
+    {
+      "bin": 1,
+      "pt_lo": 0.1,
+      "pt_hi": 0.2,
+      "condition": "Control",
+      "n_cells": 1342,
+      "mean_differentiation": -0.012386607534407056,
+      "mean_apoptosis": -0.0039407464577558594,
+      "diff_apop_ratio": 3.1440113386034136
+    },
+    {
+      "bin": 1,
+      "pt_lo": 0.1,
+      "pt_hi": 0.2,
+      "condition": "COVID-19",
+      "n_cells": 5542,
+      "mean_differentiation": 0.10069625400166056,
+      "mean_apoptosis": 0.012498212407849511,
+      "diff_apop_ratio": 8.056207920622525
+    },
+    {
+      "bin": 2,
+      "pt_lo": 0.2,
+      "pt_hi": 0.30000000000000004,
+      "condition": "Control",
+      "n_cells": 3676,
+      "mean_differentiation": 0.14638540221795973,
+      "mean_apoptosis": -0.005747025807236546,
+      "diff_apop_ratio": -25.475938871280725
+    },
+    {
+      "bin": 2,
+      "pt_lo": 0.2,
+      "pt_hi": 0.30000000000000004,
+      "condition": "COVID-19",
+      "n_cells": 605,
+      "mean_differentiation": -0.03662623260728612,
+      "mean_apoptosis": -0.0057216903104027,
+      "diff_apop_ratio": 6.402414852047439
+    },
+    {
+      "bin": 7,
+      "pt_lo": 0.7000000000000001,
+      "pt_hi": 0.8,
+      "condition": "Control",
+      "n_cells": 9,
+      "mean_differentiation": 0.09692610576077562,
+      "mean_apoptosis": 0.01627976181047526,
+      "diff_apop_ratio": 5.953413414500792
+    },
+    {
+      "bin": 8,
+      "pt_lo": 0.8,
+      "pt_hi": 0.9,
+      "condition": "Control",
+      "n_cells": 16,
+      "mean_differentiation": 0.12701155659033694,
+      "mean_apoptosis": 0.032418613824063996,
+      "diff_apop_ratio": 3.917738110009827
+    },
+    {
+      "bin": 9,
+      "pt_lo": 0.9,
+      "pt_hi": 1.0,
+      "condition": "Control",
+      "n_cells": 12,
+      "mean_differentiation": 0.10575064651162515,
+      "mean_apoptosis": 0.08331699004202663,
+      "diff_apop_ratio": 1.2692414502352158
+    }
+  ]
+}

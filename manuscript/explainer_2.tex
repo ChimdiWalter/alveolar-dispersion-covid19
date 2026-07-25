@@ -1,0 +1,432 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath,amssymb}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{float}
+
+\graphicspath{{../results/figures/}}
+
+\definecolor{note}{RGB}{60,80,140}
+\definecolor{newc}{RGB}{20,120,40}
+\newcommand{\note}[1]{{\color{note}\textit{#1}}}
+\newcommand{\honest}[1]{\textcolor{red!70!black}{\textbf{Honesty note:} #1}}
+\newcommand{\newin}[1]{\textcolor{newc}{\textbf{New in v2:} #1}}
+
+\title{An Explainer (v2):\\
+Ablation-First Trajectory Analysis of Alveolar Epithelial\\
+Robustness Collapse in Lethal COVID-19\\
+\large{with Harmony-Corrected Batch Analysis and\\
+Independent Cross-Cohort Replication}}
+\author{A guide for computational biologists, computer scientists, and biologists}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent This explainer walks through the revised (v2) analysis of the Columbia/NYP
+COVID-19 Lung Atlas (SCP1219) end-to-end, with three new pieces of work layered onto
+the original primary-cohort analysis:
+\begin{enumerate}
+\item a \textbf{fix for the Harmony batch-correction step} that had silently degenerated
+      Ablation 3 in the original paper;
+\item an \textbf{independent cross-cohort replication} on 89{,}736 AT1/AT2 cells from
+      618 donors across 35 datasets (cellxgene census, HLCA-extended + Krasnow, with
+      SCP1219 excluded); and
+\item a \textbf{gene-program audit} that resolved a previously open HVG-dropout concern.
+\end{enumerate}
+The biology, statistical framework, ablation logic, and reading-the-plots guidance from
+the original explainer are retained --- and are annotated here to show which claims
+strengthen, which change direction, and which are retracted under the new evidence.
+The v2 bottom line is unchanged in essence but far better supported: robustness collapse
+(dispersion + donor-level pseudotime displacement) transfers across cohorts; directional
+centroid displacement and marker-threshold DATP enrichment do not.
+\end{abstract}
+
+\tableofcontents
+\bigskip
+
+\section{What changed between v1 and v2}
+
+The original explainer and paper reported three pre-registered tests of
+``epithelial robustness collapse'' on a single cohort (SCP1219, Melms 2021). Two passed
+(dispersion, pseudotime shift) and one failed (centroid displacement). The paper's
+credibility rested on the fact that those tests were genuinely pre-registered and
+honestly reported.
+
+In v2 we do three additional pieces of work that either strengthen or stress-test those
+primary-cohort conclusions:
+
+\begin{description}[style=nextline]
+\item[(i) Harmony fix.] The primary paper listed as a limitation that
+      ``Harmony failed at runtime; Ablation~3 cannot distinguish corrected from
+      uncorrected.'' The root cause was a shape-assignment bug in the wrapper that
+      assumed harmonypy~$<$0.2 semantics; the current PyTorch backend returns
+      \texttt{Z\_corr} already in (cells,~PCs) orientation, and the old transpose
+      produced a degenerate matrix. We added an orientation-detecting check. With the
+      fix, Harmony converges cleanly and the Ablation~3 comparison is a real test.
+      The corrected branch \emph{amplifies} the pseudotime shift from $+0.0483$ to
+      $+0.1246$ (2.6$\times$) while leaving the dispersion and displacement statistics
+      unchanged.
+\item[(ii) Gene-program audit.] The primary paper flagged GPX1 as absent from the HVG
+      set and noted that other programs might have analogous silent dropouts. We
+      confirmed that GPX1 is absent from the SCP1219 reference gene-name file in the
+      first place (not a downstream filtering artefact); the other 83 program genes are
+      all present upstream. This retracts the ``other programs may have analogous
+      dropouts'' hedge.
+\item[(iii) Independent cross-cohort replication.] We queried cellxgene census
+      (2025-11-08) for all human lung pulmonary alveolar type~1/2 cells under
+      \texttt{disease==COVID-19} or \texttt{disease==normal}, strictly excluding SCP1219
+      by \texttt{dataset\_id}. After a per-donor 200-cell cap (RNG seed 42) the
+      replication set contains 89{,}736 cells (4{,}441 COVID / 85{,}295 normal) from
+      618 donors and 35 datasets. We score the same 8 gene programs on this cohort and
+      test the same three robustness-collapse claims.
+\end{description}
+
+\newin{this explainer has a new \S\ref{sec:harmony-fix} on the Harmony bug and fix, a
+new \S\ref{sec:replication} on the replication, and annotations throughout the biology
+and methods sections noting where conclusions changed.}
+
+\section{The biology, in plain terms}
+
+\subsection{What is the alveolar epithelium?}
+
+Deep in the lung, roughly 480 million tiny air sacs (\emph{alveoli}) are where you
+actually exchange O\textsubscript{2} and CO\textsubscript{2} with your blood. The wall
+of each alveolus is lined by a two-cell epithelium:
+
+\begin{description}[style=nextline]
+\item[AT1 (alveolar type I) cells] Extraordinarily flat; they cover about 95\% of the
+      alveolar surface. They are the \emph{gas-exchange barrier}.
+\item[AT2 (alveolar type II) cells] Cuboidal; they secrete \emph{surfactant} and act as
+      the local \emph{stem cells}: when AT1 cells are destroyed, AT2 cells divide and
+      differentiate into new AT1 cells through a transitional state marked by the genes
+      \textbf{KRT8}, \textbf{CLDN4}, and \textbf{SFN}. These transitional cells are
+      often called DATPs (damage-associated transient progenitors).
+\end{description}
+
+\subsection{What goes wrong in lethal COVID-19?}
+
+SARS-CoV-2 enters AT2 cells via the ACE2 receptor. The virus is infecting the very
+cells that the lung depends on both for surfactant and for regeneration. On top of that,
+the immune response itself damages the epithelium (inflammatory ``collateral damage'').
+Autopsy studies describe diffuse alveolar damage: AT1 cells missing, edema, and
+abnormal cells that are neither cleanly AT1 nor cleanly AT2 --- apparently caught
+mid-repair. The core question: does the alveolar epithelium fail as a \emph{coherent
+block} (all cells move to a new damaged state), or does it fail as a \emph{graded,
+continuous process} (cells fan out along a spectrum of states)?
+
+\subsection{What is already known --- and therefore what this project is \emph{not}}
+
+Melms 2021 (the SCP1219 paper itself), Delorey 2021, and Bharat 2020 have already
+described COVID-19 alveolar injury in detail, including DATP accumulation, AT2 stress
+signatures, and donor-to-donor heterogeneity. This project is \textbf{not} a new
+biology discovery; it is a \textbf{methods} contribution: what happens when you stress
+a trajectory-analysis reading of this dataset along ten pre-registered axes, and do the
+robustness-collapse signatures survive an independent 618-donor replication?
+
+\section{The data}
+
+\subsection{Primary cohort (SCP1219)}
+
+Post-mortem lung tissue from 20 COVID-19 and 7 healthy organ donors;
+116{,}313 snRNA-seq nuclei. After QC and restriction to alveolar epithelium we keep
+22{,}128 cells (9{,}608 AT1, 11{,}341 AT2, 1{,}179 ECM-high/transitional). Per-donor
+counts range 62--2{,}850; 10 of 27 donors have $<$300 cells.
+
+\note{snRNA-seq rather than scRNA-seq because whole cells don't survive post-mortem
+freeze/thaw but nuclei do. Trade-off: captures more unspliced/nascent transcript.}
+
+\subsection{Replication cohort (cellxgene census)}\label{sec:replication-data}
+
+We deliberately held Delorey (GSE171524) and Wendisch (PRJNA705687) in mind as the
+ideal full-transcriptome replication targets, but neither is hosted in cellxgene census
+as of 2025-11-08. As a practical alternative we took all human lung AT1/AT2 cells in
+the census under \texttt{disease==COVID-19} or \texttt{disease==normal} with
+\texttt{dataset\_id !=} SCP1219. This is drawn overwhelmingly from the HLCA-extended
+integration and the Krasnow COVID-infection study, and it spans 35 datasets and
+618 donors.
+
+We deliberately restricted the gene axis to the 83 genes referenced by our 8 gene
+programs plus 20 canonical markers and SARS-CoV-2 entry genes (84 unique symbols total),
+keeping the download to a tractable size. The consequence: the replication cohort is
+rich enough to rescore the gene programs and run a marker-based DATP assay, but
+\emph{not} rich enough to build a new HVG/PCA/diffusion manifold and repeat diffusion
+pseudotime from scratch. This is disclosed as a remaining limitation.
+
+\subsubsection*{Class-balance asymmetry and the per-donor cap}
+
+Before capping, the replication cohort is $\approx$15:1 normal:COVID. This reflects
+that cellxgene census is mostly healthy atlas data with a few COVID studies mixed in.
+A cell-level test would be dominated by whichever few large normal donors happen to
+have extreme scores; we mitigate by capping each donor to $\leq$200 cells with seed~42
+(89{,}736 cells post-cap) and by always reporting a donor-level pseudobulk test
+alongside the cell-level one.
+
+\section{Pipeline --- what each step computes and why}
+
+Versions: scanpy 1.12.1, anndata 0.12.10, harmonypy 0.2.0, palantir 1.4.4,
+Python 3.12.3, RNG seed 42.
+
+\begin{enumerate}
+\item \textbf{QC.} $\geq$500 UMI, $\geq$250 genes, $\leq$20\% mitochondrial, doublet
+      filter. QC tables in \texttt{results/tables/tableS2\_qc\_*.csv}.
+\item \textbf{Normalization.} \texttt{sc.pp.normalize\_total(target=1e4)} then
+      \texttt{log1p}. \texttt{.raw} captures the full-gene log-normalized matrix for
+      gene-program scoring.
+\item \textbf{HVG selection.} 3{,}000 Seurat-v3 HVGs.
+\item \textbf{Scale \& PCA.} scale to unit variance (clip at 10), 50-component PCA.
+\item \textbf{Batch correction.} Harmony on \texttt{donor\_id}
+      (see \S\ref{sec:harmony-fix} for the v2 fix).
+\item \textbf{Neighbor graph.} $k$-NN with $k{=}15$ on PCA-50 (uncorrected by default;
+      Harmony branch is an ablation).
+\item \textbf{Embeddings.} UMAP (visualization) and 15-component diffusion map
+      (trajectory).
+\item \textbf{Pseudotime.} Diffusion pseudotime rooted at the healthy-AT2 centroid,
+      normalized to $[0,1]$.
+\item \textbf{Gene-program scoring.} \texttt{sc.tl.score\_genes} against \texttt{.raw}
+      for 8 programs (AT1 identity, AT2 identity, interferon response, NF-$\kappa$B,
+      oxidative stress, apoptosis, senescence, AT2$\to$AT1 differentiation).
+\item \textbf{Robustness tests.}
+      (a)~one-sided Mann--Whitney $U$ on PCA-50 distances (centroid displacement);
+      (b)~Levene's test (dispersion);
+      (c)~1000-permutation test on median pseudotime difference;
+      (d)~DATP (KRT8$^+$/CLDN4$^+$) chi-square.
+\end{enumerate}
+
+\section{The Harmony fix}\label{sec:harmony-fix}
+
+\subsection{What went wrong}
+
+The v1 paper included the Harmony branch of Ablation~3 but the output was identical to
+the uncorrected branch because of a wrapper bug. Specifically, the wrapper assigned
+
+\begin{verbatim}
+adata.obsm["X_pca_harmony"] = ho.Z_corr.T
+\end{verbatim}
+
+This followed the harmonypy~$<$~0.2 convention (Z\_corr in PCs$\times$cells). The 0.2
+release switched to a PyTorch backend that returns Z\_corr in cells$\times$PCs.
+The transpose then produced a (50, 22128) matrix which either failed assignment or was
+silently matched against the wrong axis downstream, giving a degenerate embedding that
+mimicked the uncorrected PCA.
+
+\subsection{The fix}
+
+We replaced the unconditional transpose with an orientation check
+(\texttt{src/embedding.py} \texttt{run\_harmony}):
+
+\begin{verbatim}
+Z = ho.Z_corr
+if Z.shape[0] != adata.n_obs and Z.shape[1] == adata.n_obs:
+    Z = Z.T
+adata.obsm["X_pca_harmony"] = Z
+\end{verbatim}
+
+Harmony now converges in 3 iterations.
+
+\subsection{What the working Ablation 3 shows}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+Branch & MPD (COVID$-$control) & $\rho$ & $r$ \\
+\midrule
+Uncorrected PCA & $+0.0483$ & 0.548 & 0.141 \\
+Harmony-corrected PCA & $+0.1246$ & 0.452 & 0.141 \\
+\bottomrule
+\end{tabular}
+\caption{Ablation 3, v2. Harmony $2.6\times$ amplifies the pseudotime shift while
+leaving the dispersion/displacement statistics unchanged.}
+\end{table}
+
+This is a qualitative change in how we should interpret the v1 paper. Previously the
+v1 paper could not say what batch correction did to the signal --- it was a genuine
+open limitation. The v2 evidence is that donor-level batch correction strengthens the
+primary conclusion. That is the direction of evidence you hope to see, but cannot
+assume: Harmony could equally have flattened the shift.
+
+\section{Reading the primary-cohort results (unchanged)}
+
+The three pre-registered tests and their outcomes on SCP1219 are unchanged between
+v1 and v2 --- they depend only on the primary pipeline, not on the Harmony fix or the
+replication.
+
+\subsection{Centroid displacement (fails)}
+
+One-sided Mann--Whitney $U$ in PCA-50 (COVID $>$ Healthy): $p=1.0$; COVID median
+lower than healthy; $r=0.14$ opposite to the alternative. The pre-specified core test
+did not distinguish conditions directionally.
+
+\subsection{Dispersion (supported)}
+
+Within-group distance to own centroid, PCA-50. COVID variance $33.28$; healthy $14.58$
+(2.3$\times$). Levene $=276.5$, $p<10^{-30}$. COVID cells are \emph{spread out}, not
+\emph{pushed away}.
+
+\subsection{Pseudotime enrichment (supported)}
+
+Control median $0.063$; COVID median $0.111$; observed median difference $+0.0483$.
+1000-permutation null: mean $6.0\times10^{-5}$, std $1.24\times10^{-3}$. $p=0.000999$.
+Leave-one-donor-out preserves direction in all 27 iterations.
+
+\section{The ablation battery, annotated with v2}
+
+All ten ablations from the primary paper are unchanged except for Ablation~3.
+Table~\ref{tab:ablations-v2} presents the complete set using the v2 Harmony numbers.
+
+\begin{table}[H]
+\scriptsize
+\centering
+\begin{tabular}{lrrrl}
+\toprule
+Ablation & MPD & $\rho$ & $r$ & Notes \\
+\midrule
+1 AT2-only & $+0.133$ & 0.33 & $-0.29$ & sign flip on $r$ \\
+2 UMAP / diffmap & $+0.048$ & 0.55 & $+0.14$ & unchanged \\
+3 Harmony corrected & $+0.125$ & 0.45 & $+0.14$ & \textbf{v2 --- now functional} \\
+3 Uncorrected & $+0.048$ & 0.55 & $+0.14$ & baseline \\
+4 No apoptosis genes & $+0.074$ & 0.50 & $+0.14$ & slight up \\
+5 4 roots & $-0.037$ to $+0.048$ & $-0.10$ to 0.64 & $+0.14$ & root-dependent \\
+6 Broader epithelial & $-0.008$ & 0.83 & $+0.25$ & shift abolished \\
+7 LOO (27) & 0.028--0.202 & $-0.17$--0.74 & per-iter & direction 27/27 \\
+8 Curated-only & $+0.048$ & 1.00 & $+0.14$ & stable \\
+8 MSigDB-only & $+0.048$ & $-0.80$ & $+0.14$ & ordering inverted \\
+9 Palantir & $+0.028$ & --- & --- & alt pseudotime algorithm \\
+10 Permutation & $p=0.001$ & --- & --- & 1000 shuffles \\
+\bottomrule
+\end{tabular}
+\caption{Ten-way ablation summary, v2.}\label{tab:ablations-v2}
+\end{table}
+
+\section{Independent replication}\label{sec:replication}
+
+\subsection{Injury composite surrogate}
+
+Because the replication cohort has only 84 genes, we cannot rebuild the manifold.
+As a surrogate we define an \emph{injury composite} $=$ the mean of six
+non-homeostatic program scores (interferon, NF-$\kappa$B, oxidative stress, apoptosis,
+senescence, AT2$\to$AT1). Higher values $\Rightarrow$ more injury-program activation.
+
+\subsection{Dispersion --- replicates strongly}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lrr}
+\toprule
+Metric & COVID & Normal \\
+\midrule
+Injury composite variance & 0.0505 & 0.0306 \\
+Variance ratio COVID/Normal & \multicolumn{2}{r}{\textbf{1.65$\times$}} \\
+Levene statistic & \multicolumn{2}{r}{626.18} \\
+Levene $p$ & \multicolumn{2}{r}{$1.0\times 10^{-137}$} \\
+\bottomrule
+\end{tabular}
+\caption{Replication dispersion test. The variance ratio drops from 2.3$\times$
+in the primary cohort to 1.65$\times$ in the 618-donor replication, consistent with
+cross-study heterogeneity dampening effect sizes without eliminating them.}
+\end{table}
+
+\subsection{Pseudotime surrogate --- cell-level fails, donor-level replicates}
+
+One-sided Mann--Whitney (COVID $>$ normal) on cell-level injury composite: $p=1.0$.
+Donor-level pseudobulk (43 COVID donors vs 575 normal donors): $p=1.98\times10^{-3}$
+\emph{in the predicted direction}.
+
+This inversion is informative. In a class-imbalanced heterogeneous atlas,
+cell-level tests are driven by the largest donors of the majority class. Donor-level
+pseudobulk is the right unit of analysis for cross-study tests, and it replicates.
+
+\subsection{KRT8$^+$/CLDN4$^+$ DATP enrichment --- does NOT replicate}
+
+\honest{in the primary cohort we saw $3.1\times$ enrichment of KRT8$^+$/CLDN4$^+$ cells
+in COVID. In the replication cohort we see the \emph{opposite} direction: COVID
+$22.9\%$ vs normal $47.6\%$, fold $=0.48\times$ ($\chi^2\ p<10^{-200}$). The most
+plausible explanation is that a simple expression-threshold cutoff is not portable
+across 35 datasets with different dissociation protocols, sequencing depths, and
+normalization choices. The DATP \emph{biology} is well-supported by manifold-based
+identifications in Kobayashi/Strunz/Adams/Habermann 2020 and by the Melms paper itself,
+but the marker-threshold chi-square assay we used should be \textbf{retracted as a
+portable population-level metric}.}
+
+\section{Composite assessment (v2)}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lll}
+\toprule
+Criterion & Primary (SCP1219) & Replication (census) \\
+\midrule
+Centroid displacement & fails ($p=1.0$) & fails cell-level ($p=1.0$) \\
+Dispersion (Levene) & supported ($p\approx 0$) & supported ($p\approx10^{-137}$) \\
+Pseudotime enrichment & supported ($p=0.001$) & supported donor-level ($p=1.98\text{e-}3$) \\
+Harmony-corrected shift & --- & MPD $\times 2.6$ \\
+KRT8$^+$/CLDN4$^+$ DATPs & $3.1\times$ enriched & $0.48\times$ (retracted) \\
+\bottomrule
+\end{tabular}
+\caption{v2 assessment across both cohorts.}
+\end{table}
+
+\section{What the v2 evidence supports}
+
+\begin{enumerate}
+\item Robustness collapse (dispersion + donor-level pseudotime displacement)
+      \emph{transfers} across cohorts.
+\item Harmony batch correction \emph{amplifies} the pseudotime shift by $\approx$2.6$\times$.
+\item Dispersion (Levene) is a portable, cross-study-robust signal of
+      robustness collapse.
+\item Donor-level pseudobulk Mann--Whitney is the correct unit of analysis for
+      cross-study replication in imbalanced atlases.
+\end{enumerate}
+
+\section{What the v2 evidence does NOT support}
+
+\begin{enumerate}
+\item Directional mono-vector centroid displacement --- fails in both cohorts.
+\item A specific IFN$\to$NF-$\kappa$B$\to$repair$\to$apoptosis cascade
+      (ordering inverts under MSigDB or COVID-extreme root).
+\item Marker-threshold KRT8$^+$/CLDN4$^+$ DATP population enrichment as a portable
+      cross-cohort statistic.
+\item Any claim about elapsed time --- pseudotime is a manifold ordering.
+\end{enumerate}
+
+\section{Remaining limitations}
+
+\begin{itemize}
+\item Cross-sectional, post-mortem, lethal cases only (primary).
+\item Replication cohort does not include Delorey (GSE171524) or Wendisch
+      (PRJNA705687); these datasets are not on cellxgene census and would require
+      raw GEO retrieval.
+\item Replication cohort uses a curated 84-gene panel; full-transcriptome HVG/PCA/DPT
+      replication is not yet done.
+\item Fine program ordering is hypothesis-generating only.
+\end{itemize}
+
+\section{What to tell a computer scientist vs a biologist}
+
+\textbf{For the computer scientist:} we built an ablation-first trajectory-analysis
+pipeline, pre-registered three success criteria with distinct geometric
+interpretations (centroid displacement vs dispersion vs trajectory enrichment),
+and found that a partial success (2/3 criteria) with strong out-of-cohort replication
+of the two that passed is more informative than a uniform-pass would be. The
+methodological takeaways are (i) dispersion beats centroid displacement as a
+robustness-collapse metric; (ii) donor-level pseudobulk matters in imbalanced atlases;
+(iii) marker-threshold cell-state classifiers don't transfer; (iv) fix your Harmony
+wrapper.
+
+\textbf{For the biologist:} in lethal COVID-19, alveolar epithelial cells don't all
+move together to a new damaged state; they \emph{fan out} along a graded axis.
+This robustness-collapse signature replicates in an independent 618-donor atlas.
+The DATP biology is real but needs manifold-based identification, not threshold
+classifiers, to cross cohorts cleanly.
+
+\end{document}

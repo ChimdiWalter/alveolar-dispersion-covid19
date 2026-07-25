@@ -1,0 +1,3 @@
+,condition,n_cells,mean_pseudotime,median_pseudotime,std_pseudotime,skew
+0,Control,12181,0.110850796,0.06288426,0.09802506,1.7299945
+1,COVID-19,9947,0.1178482,0.111139536,0.046105452,0.36111876

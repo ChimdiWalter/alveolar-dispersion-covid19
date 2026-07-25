@@ -1,0 +1,9 @@
+{
+  "n_covid_donors": 20,
+  "n_healthy_donors": 7,
+  "covid_median_dispersion": 7.772499084472656,
+  "healthy_median_dispersion": 10.58382511138916,
+  "mannwhitney_p": 0.9997229823316779,
+  "levene_stat": 3.5443025705268667,
+  "levene_p": 0.0714384984756102
+}

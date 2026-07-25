@@ -1,0 +1,4 @@
+,test,U,p_value,effect_size_r,covid_mean,covid_median,healthy_mean,healthy_median,n_covid,n_healthy,statistic,healthy_variance,covid_variance,healthy_mean_dispersion,covid_mean_dispersion,observed_diff,null_mean,null_std,n_permutations
+0,Mann-Whitney U (COVID > Healthy),52059320.0,1.0,0.14068293571472168,12.36194133758545,10.678589820861816,12.096474647521973,11.563432693481445,9947.0,12181.0,,,,,,,,,
+1,Levene's test (dispersion),,0.0,,,,,,,,276.52410888671875,14.575655937194824,33.275203704833984,12.096474647521973,10.907251358032227,,,,
+2,permutation (median pseudotime difference),,0.000999000999000999,,,,,,,,,,,,,0.04825527220964432,6.010313332080841e-05,0.0012365345295381868,1000.0

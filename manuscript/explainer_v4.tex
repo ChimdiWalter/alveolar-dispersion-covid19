@@ -1,0 +1,823 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath,amssymb}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{float}
+\usepackage{longtable}
+\usepackage{tcolorbox}
+\tcbuselibrary{breakable}
+\usepackage{setspace}
+\onehalfspacing
+
+\graphicspath{{../results/figures/}}
+
+\definecolor{boxblue}{RGB}{230,238,250}
+\definecolor{boxyellow}{RGB}{255,246,220}
+\definecolor{boxgreen}{RGB}{230,246,230}
+\definecolor{boxred}{RGB}{253,232,232}
+\definecolor{boxpurple}{RGB}{240,230,250}
+\definecolor{boxgray}{RGB}{240,240,240}
+
+\newtcolorbox{jargon}[1]{colback=boxblue,colframe=blue!55!black,
+  title={Jargon unpacked: #1},fonttitle=\bfseries,breakable}
+\newtcolorbox{whyblock}{colback=boxyellow,colframe=orange!60!black,
+  title={Why this matters to the audience},fonttitle=\bfseries,breakable}
+\newtcolorbox{resultbox}{colback=boxgreen,colframe=green!45!black,
+  title={Key point to emphasize},fonttitle=\bfseries,breakable}
+\newtcolorbox{pitfall}{colback=boxred,colframe=red!60!black,
+  title={Common question / potential confusion},fonttitle=\bfseries,breakable}
+\newtcolorbox{speaknote}{colback=boxgray,colframe=gray!60!black,
+  title={What to say (suggested script)},fonttitle=\bfseries,breakable}
+
+\title{Presentation Speaker's Guide\\
+\large{Slide-by-slide explanation of what to tell the audience:\\
+``Dispersion, not displacement --- loss of alveolar epithelial\\
+state coherence in lethal COVID-19''}}
+\author{Pierce Taylor \& Chimdi Walter Ndubuisi\\Computational Systems Biology 8190 --- Dr.\ Toni Kazic}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent This document is a complete, slide-by-slide speaking guide for the presentation. For each of the 22 slides, it explains: (1) what is on the slide; (2) what you should say to the audience in plain language; (3) what the numbers mean; (4) what questions to anticipate; and (5) transitions to the next slide. It assumes the audience includes both biologists and computational scientists who may not share the same vocabulary. Use this as a script, a rehearsal aid, or a reference while presenting.
+
+Boxes are colour-coded:
+\begin{itemize}
+\item \textcolor{blue!55!black}{\textbf{Blue}} boxes unpack technical jargon the audience might not know.
+\item \textcolor{orange!60!black}{\textbf{Yellow}} boxes explain why this slide matters to the overall story.
+\item \textcolor{green!45!black}{\textbf{Green}} boxes highlight the key point to drive home.
+\item \textcolor{red!60!black}{\textbf{Red}} boxes flag likely audience questions or confusions.
+\item \textcolor{gray!60!black}{\textbf{Gray}} boxes give suggested speaking scripts.
+\end{itemize}
+\end{abstract}
+
+\tableofcontents
+\clearpage
+
+
+% =========================================================================
+\section{Slide 1 --- Title Slide}
+% =========================================================================
+
+\subsection{What is on the slide}
+
+The title: ``Dispersion, not displacement: Loss of alveolar epithelial state coherence in lethal COVID-19.'' Authors: Pierce Taylor \& Chimdi Walter Ndubuisi. Course: Computational Systems Biology 8190. Instructor: Dr.\ Toni Kazic. Today's date.
+
+\subsection{What to tell the audience}
+
+\begin{speaknote}
+``Good [morning/afternoon]. Our project asks a specific geometric question about how lung cells fail in lethal COVID-19. The title gives away the punchline: it's dispersion, not displacement. I'll explain exactly what that means on the next slide.''
+\end{speaknote}
+
+\begin{whyblock}
+The title is designed to communicate the main finding in four words. ``Dispersion, not displacement'' tells the audience the answer before they hear the question. This is intentional --- it frames everything that follows.
+\end{whyblock}
+
+\begin{pitfall}
+If someone asks ``what does state coherence mean?'' before you get to the next slide, say: ``It means cells of the same type normally look very similar to each other. Losing coherence means they stop looking alike --- they scatter in many directions at once. I'll show you exactly what that looks like in a moment.''
+\end{pitfall}
+
+\textbf{Transition:} ``Let me frame the exact scientific question.''
+
+
+% =========================================================================
+\section{Slide 2 --- The Question in One Sentence}
+% =========================================================================
+
+\subsection{What is on the slide}
+
+One large-font question: ``Do alveolar epithelial cells in lethal COVID-19 fail as a coherent block (pushed toward one damaged state), or do they disperse across many injury states?'' Below: three bullet points connecting each hypothesis to a measurable geometric prediction.
+
+\subsection{What to tell the audience}
+
+\begin{speaknote}
+``Here's the core question. When lung cells are damaged by COVID-19, there are two ways they could fail. Option one: every cell gets pushed in the same direction --- toward some single `damaged state.' If that's true, we'd see the center of the sick cells move away from healthy cells. We call that centroid displacement.
+
+Option two: cells scatter in many different directions at once --- some activate inflammation, some go into senescence, some try to repair. If that's true, the center might not move much, but the \emph{spread} of the sick cells would be much wider than healthy. We call that dispersion.
+
+The key insight is that these predict \emph{opposite} geometric signatures. So whichever test fails is just as informative as whichever succeeds. We committed to both tests in advance --- this is honest hypothesis testing.''
+\end{speaknote}
+
+\begin{jargon}{centroid displacement vs.\ dispersion}
+\textbf{Centroid}: the average position of a group of cells in gene-expression space. If COVID cells shift coherently, their centroid moves away from the healthy centroid.
+
+\textbf{Dispersion (variance)}: how spread out cells are around their own group's center. If cells scatter in many directions, the group's variance increases even if its center doesn't move.
+
+Analogy: imagine people standing in a park. ``Displacement'' means the whole crowd walks north. ``Dispersion'' means people scatter in all directions --- the center of the crowd barely moves, but the area they cover doubles.
+\end{jargon}
+
+\begin{resultbox}
+Drive home that this is a \emph{designed} experiment with pre-registered opposing predictions. The audience should understand that a failing test is a positive finding, not a negative result.
+\end{resultbox}
+
+\textbf{Transition:} ``Before I show results, let me explain why this matters beyond what's already known.''
+
+
+% =========================================================================
+\section{Slide 3 --- Why This Matters}
+% =========================================================================
+
+\subsection{What is on the slide}
+
+Three bullets: (1) Prior work (Melms 2021, Delorey 2021) already described alveolar injury. (2) Our contribution is methodological, with four sub-bullets. (3) Honest reporting.
+
+\subsection{What to tell the audience}
+
+\begin{speaknote}
+``We want to be upfront: we are not discovering new biology about COVID lungs. Other groups already described the damage. Our contribution is methodological --- \emph{how} you ask the question matters.
+
+Specifically, we did four things that are unusual for a single-cell paper:
+
+First, we pre-specified geometric tests with opposing predictions --- so we can't cherry-pick the result.
+
+Second, we ran ten systematic ablations. That means we changed one pipeline choice at a time --- different parameters, different gene lists, different algorithms --- and checked whether the conclusion still holds. Think of it as stress-testing.
+
+Third, we replicated in a completely independent cohort of 618 donors from 35 different studies --- data we never touched during the primary analysis.
+
+Fourth, we built donor-level statistical models that properly treat 27 donors as the sample size, not 22,000 cells. Plus portable state scores that work across cohorts, and a mechanistic decomposition showing which biological programs drive the dispersion.
+
+And we report honestly: some findings are rock-solid, others are fragile, and one actually reverses in the replication data.''
+\end{speaknote}
+
+\begin{whyblock}
+This slide manages expectations. The audience should understand they are evaluating a \emph{methodology} paper, not a biology-discovery paper. The novelty is in the rigor of the approach, not in saying ``COVID damages lungs.''
+\end{whyblock}
+
+\textbf{Transition:} ``For those who aren't lung biologists, let me give a 60-second biology recap.''
+
+
+% =========================================================================
+\section{Slide 4 --- Biology Recap (for non-biologists)}
+% =========================================================================
+
+\subsection{What is on the slide}
+
+Two columns. Left: the two cell types (AT1 and AT2), what happens when AT1 die (repair pathway), and what goes wrong in COVID. Right: a glossary of key terms (snRNA-seq, pseudotime, dispersion, DATP).
+
+\subsection{What to tell the audience}
+
+\begin{speaknote}
+``Your lungs have about 480 million tiny air sacs. Each one is lined by two types of cells:
+
+AT1 cells are thin and flat --- they're the gas-exchange surface. Oxygen crosses through them into your blood. They cover 95\% of the alveolar surface but they cannot divide.
+
+AT2 cells are smaller, cube-shaped. They do two jobs: first, they secrete surfactant --- a soapy substance that keeps the air sacs from collapsing. Second, they are the local stem cells. When AT1 cells die, AT2 cells divide and transform into new AT1 cells to patch the hole.
+
+That transformation goes through an intermediate state called a transitional cell, or DATP. In healthy lungs, these cells are rare --- they pass through quickly. In injury, they accumulate because cells get stuck mid-transition.
+
+In lethal COVID-19, the virus enters AT2 cells through the ACE2 receptor. This is catastrophic because it kills both the surfactant factory AND the stem cells simultaneously. The repair system is destroyed.
+
+On the right side, I've listed the key technical terms we'll use. The most important one for today is \emph{dispersion}: how spread out cells are in gene-expression space. That's what we measure.''
+\end{speaknote}
+
+\begin{jargon}{DATP (damage-associated transient progenitor)}
+A cell caught in the middle of transforming from AT2 to AT1. It expresses specific genes (KRT8, CLDN4) that neither healthy AT2 nor healthy AT1 express strongly. In mouse injury models, these cells resolve within weeks. In human lethal COVID, they appear stuck.
+\end{jargon}
+
+\begin{pitfall}
+A biologist might ask: ``Why focus on epithelium and not immune cells?'' Answer: ``The immune response to COVID is well-studied. The epithelial response --- specifically how the stem cells fail to repair --- is less well-characterized geometrically. We focus on the repair-failure side.''
+\end{pitfall}
+
+\textbf{Transition:} ``Now let me show you the data we used.''
+
+
+% =========================================================================
+\section{Slide 5 --- Data}
+% =========================================================================
+
+\subsection{What is on the slide}
+
+Two columns. Left: Primary atlas details (Melms 2021, 22,128 alveolar epithelial cells, 27 donors). Right: Replication cohort (89,736 cells, 618 donors, 35 datasets, SCP1219 excluded). Bottom: a red alert line saying the true sample size is 27 donors, not 22,128 cells.
+
+\subsection{What to tell the audience}
+
+\begin{speaknote}
+``We used two datasets. The primary atlas is from Melms et al.\ 2021 --- post-mortem lung tissue from 20 people who died of COVID-19 and 7 healthy organ donors. After quality control and subsetting to alveolar epithelial cells, we have 22,128 cells.
+
+For replication, we pulled data from the CZ cellxgene census --- a curated federation of single-cell datasets. We got 89,736 alveolar cells from 618 donors across 35 independent studies. Critically, we excluded our primary cohort by its dataset ID, so there is zero data leakage.
+
+But here's the most important number on this slide [point to the red text]: the true sample size is 27 donors, not 22,128 cells. Cells from the same donor share the same biology --- they are not independent observations. Every statistical claim we make must hold when we treat donors, not cells, as the unit of analysis. This is something many single-cell papers get wrong.''
+\end{speaknote}
+
+\begin{resultbox}
+Hammer the point about $n = 27$. This is the single most important statistical concept in the talk. If the audience remembers one methodological point, it should be: cells are not independent.
+\end{resultbox}
+
+\begin{pitfall}
+Someone might ask: ``Why only 84 genes in replication?'' Answer: ``Full-transcriptome downloads from census would be terabytes. We downloaded only the genes we need to compute our 8 program scores plus canonical markers. This is enough to test dispersion and state scores, but too narrow to build a new trajectory from scratch --- which we acknowledge as a limitation.''
+\end{pitfall}
+
+\textbf{Transition:} ``Here's a quick overview of the computational pipeline.''
+
+
+% =========================================================================
+\section{Slide 6 --- Pipeline at a Glance}
+% =========================================================================
+
+\subsection{What is on the slide}
+
+Eight numbered steps of the analysis pipeline, from QC through statistical tests. Bottom: software versions and seed.
+
+\subsection{What to tell the audience}
+
+\begin{speaknote}
+``I won't dwell on every step here, but I want you to see the full pipeline so nothing feels like a black box.
+
+Step 1: Quality control --- we remove junk cells (too few genes = empty droplets; too many genes = doublets; too much mitochondrial RNA = dying cells).
+
+Step 2: We subset to just alveolar epithelium --- AT1, AT2, and transitional cells.
+
+Steps 3--5: Standard preprocessing --- normalize expression, pick the 3,000 most variable genes, reduce to 50 principal components.
+
+Step 6: Build a diffusion map and compute pseudotime --- this gives each cell a number from 0 to 1 representing how far it's progressed along the injury trajectory. We root it at healthy AT2 cells.
+
+Step 7: Score 8 curated gene programs --- things like interferon response, oxidative stress, senescence.
+
+Step 8: Three pre-specified statistical tests plus ten ablations.
+
+Everything is in Python, fully reproducible with a fixed random seed of 42. All parameters are in a single config file.''
+\end{speaknote}
+
+\begin{jargon}{diffusion pseudotime}
+Imagine dropping a bead of ink at one cell (the root) and letting it diffuse across the cell neighborhood graph. Cells that the ink reaches quickly are ``early'' (low pseudotime); cells it reaches slowly are ``late'' (high pseudotime). It captures the continuous ordering of cells along a biological process without forcing them into discrete clusters.
+\end{jargon}
+
+\begin{whyblock}
+Showing the full pipeline signals transparency. The audience should feel that nothing is hidden. Every step is documented, parameterized, and reproducible.
+\end{whyblock}
+
+\textbf{Transition:} ``Let me show you what the data looks like.''
+
+
+% =========================================================================
+\section{Slide 7 --- The Manifold}
+% =========================================================================
+
+\subsection{What is on the slide}
+
+A three-panel UMAP figure. Left panel: cells colored by condition (COVID vs Healthy). Center: cells colored by cell type (AT1, AT2, transitional). Right: cells colored by pseudotime (gradient from 0 to 1).
+
+\subsection{What to tell the audience}
+
+\begin{speaknote}
+``This is a UMAP --- a 2D map where each dot is one cell and cells with similar gene expression are placed near each other.
+
+Left panel: COVID cells in red, healthy in blue. Notice they largely overlap --- there is no clean separation. This already hints that simple displacement won't work.
+
+Center panel: Cell types. AT2 cells cluster on one side, AT1 on the other, transitional cells in between. The biology makes sense.
+
+Right panel: Pseudotime --- a gradient from dark (early, near healthy AT2) to bright (late, far along the trajectory). The gradient flows smoothly from AT2 through transitional toward AT1.
+
+The key thing to notice: the COVID cloud is more spread out than the healthy cloud, but it doesn't sit in a completely different region. That's the visual version of our main finding --- dispersion, not displacement.
+
+One important caveat: UMAP is only for visualization. We never use UMAP coordinates for statistics --- it distorts distances. All our measurements happen in the 50-dimensional PCA space.''
+\end{speaknote}
+
+\begin{pitfall}
+Someone might ask: ``If they overlap on UMAP, how do you know there's a real difference?'' Answer: ``UMAP is a compressed 2D picture --- it can't show the full 50-dimensional structure. The statistical tests (Levene's, Mann-Whitney, permutation) operate in the full PCA space and detect differences that UMAP flattens out.''
+\end{pitfall}
+
+\textbf{Transition:} ``Now the main result --- the dispersion finding.''
+
+
+% =========================================================================
+\section{Slide 8 --- Result 1: Dispersion (The Main Finding)}
+% =========================================================================
+
+\subsection{What is on the slide}
+
+Left: the dispersion centerpiece figure (distributions of within-group distances). Right: four key numbers (COVID variance 33.28, Healthy 14.58, ratio 2.3$\times$, Levene $p < 10^{-30}$). Plus the replication result.
+
+\subsection{What to tell the audience}
+
+\begin{speaknote}
+``This is the most important slide in the talk.
+
+For each cell, we computed how far it sits from the center of its own group in 50-dimensional gene-expression space. Then we asked: is the \emph{spread} of these distances different between COVID and healthy?
+
+The answer is dramatic. COVID cells have a within-group variance of 33.28. Healthy cells have 14.58. That's a 2.3-fold ratio. Levene's test gives $p < 10^{-30}$ --- this is not a borderline result.
+
+What does this mean biologically? COVID cells don't converge on one `damaged state.' They scatter in many directions --- some activate inflammation, some go senescent, some try to repair, some die. The tissue loses its coherence.
+
+And this replicates: in the independent 618-donor cohort, we get a variance ratio of 1.65$\times$ with $p \approx 10^{-137}$. Slightly smaller effect, but overwhelmingly significant. This is the most portable finding in the entire study.''
+\end{speaknote}
+
+\begin{jargon}{Levene's test}
+A standard statistical test for comparing variances (spreads) between groups. Unlike tests that compare averages, Levene's asks: ``Do these two groups have different amounts of internal scatter?'' It's robust to non-normal distributions.
+\end{jargon}
+
+\begin{resultbox}
+This is the slide where the audience should think ``okay, that's convincing.'' Emphasize: (1) the effect is large (2.3$\times$); (2) it's overwhelmingly significant; (3) it replicates in independent data. Three lines of evidence for one finding.
+\end{resultbox}
+
+\textbf{Transition:} ``So dispersion succeeds. What about the alternative --- centroid displacement?''
+
+
+% =========================================================================
+\section{Slide 9 --- Result 2: Centroid Displacement Fails}
+% =========================================================================
+
+\subsection{What is on the slide}
+
+Three bullets showing the displacement test failed: $p = 1.0$, COVID cells are actually \emph{closer} to the healthy centroid, and why this makes sense mechanistically.
+
+\subsection{What to tell the audience}
+
+\begin{speaknote}
+``Now for the other side of the coin. We tested whether COVID cells sit further from the healthy centroid --- the `one coherent damaged state' model.
+
+The result: $p = 1.0$. Not just non-significant --- $p$ equals exactly 1.0. COVID cells are actually slightly \emph{closer} to the healthy centroid than healthy cells are.
+
+This might seem paradoxical, but it makes perfect sense once you understand the geometry. Some COVID cells stay near homeostatic identity --- they haven't been damaged yet or they're resisting. Other COVID cells scatter far away in different directions. When you average across both subpopulations, the average distance is unremarkable. A displacement test averages over the heterogeneity and sees nothing.
+
+This is not a failure of our study --- it's a positive finding. It rules out the simpler model. Cells are not being pushed coherently in one direction. They're fanning out.
+
+And this also replicates: $p = 1.0$ in the replication cohort too. The displacement failure is just as reproducible as the dispersion success.''
+\end{speaknote}
+
+\begin{whyblock}
+This is where the audience sees why pre-registering opposing tests matters. If we had only tested displacement, we would have published ``no significant difference'' and missed the real story entirely. The combination of one test failing and another succeeding is more informative than either alone.
+\end{whyblock}
+
+\begin{pitfall}
+A statistics-savvy audience member might ask: ``Isn't $p = 1.0$ just meaning you tested in the wrong direction?'' Answer: ``Exactly --- we tested one-sided: `are COVID cells \emph{further} from healthy?' The answer is no --- they're closer. This is the pre-registered direction. We report the failure as informative, not as grounds for flipping the hypothesis post hoc.''
+\end{pitfall}
+
+\textbf{Transition:} ``The third test is pseudotime --- where cells sit along the injury trajectory.''
+
+
+% =========================================================================
+\section{Slide 10 --- Result 3: Pseudotime Shift (Supported)}
+% =========================================================================
+
+\subsection{What is on the slide}
+
+Left: figure showing per-donor median pseudotime. Right: five key numbers (medians, delta, permutation $p$, LOO, Harmony amplification) plus donor-level OLS results.
+
+\subsection{What to tell the audience}
+
+\begin{speaknote}
+``The third test asks: are COVID cells enriched at later positions along the injury trajectory?
+
+Yes. COVID cells have median pseudotime 0.111 versus 0.063 for healthy. The difference is +0.048, about 5\% of the full range. Permutation test: $p = 0.001$.
+
+Now, is +0.048 a lot? In absolute terms, it's modest. But three things give us confidence:
+
+First, leave-one-donor-out analysis: we removed each of the 27 donors one at a time and re-ran the test. The direction was preserved in all 27 iterations. No single donor drives this.
+
+Second, after fixing a batch-correction bug in Harmony, the shift amplifies 2.6-fold to +0.125. This means the uncorrected version was \emph{underestimating} the true effect.
+
+Third, at the donor level, an OLS regression gives $\beta = +0.043$, $p = 0.013$, with condition explaining 22\% of the variance in donor-level median pseudotime. This uses $n = 27$ donors as the sample size --- proper inference.''
+\end{speaknote}
+
+\begin{jargon}{leave-one-donor-out (LOO)}
+A robustness check where you remove one donor at a time and re-run the entire analysis. If the result flips when you remove a single donor, that donor was driving everything. If it holds for all 27 removals, it's robust.
+\end{jargon}
+
+\begin{jargon}{OLS regression}
+Ordinary least squares: fit a line through the data. Here: $\text{median pseudotime} = \beta_0 + \beta_1 \times \text{is\_covid}$. Each donor is one data point. $\beta_1 = +0.043$ means being a COVID donor adds 0.043 units to expected median pseudotime.
+\end{jargon}
+
+\textbf{Transition:} ``So two of three pre-registered tests support our hypothesis. But there's a surprise when we zoom in to the donor level.''
+
+
+% =========================================================================
+\section{Slide 11 --- Donor-Level Dispersion: A Surprising Twist}
+% =========================================================================
+
+\subsection{What is on the slide}
+
+Left column: text explaining the paradox (cell-level COVID cells are more dispersed, but donor-level COVID donors have \emph{lower} within-donor dispersion). A resolution explaining between-donor heterogeneity. Right column: a TikZ diagram showing healthy donors as one tight blue cluster and COVID donors as several small separate red circles.
+
+\subsection{What to tell the audience}
+
+\begin{speaknote}
+``This is one of the most interesting findings, and it's a surprise.
+
+At the cell level, we showed COVID cells are 2.3$\times$ more dispersed. But when we compute dispersion \emph{within each individual donor}, COVID donors actually have \emph{lower} internal dispersion than healthy donors --- 7.77 versus 10.58.
+
+How can both be true? Look at the diagram. Healthy donors [point to blue circle] all cluster in roughly the same region of gene-expression space --- their cells form one big overlapping cloud.
+
+COVID donors [point to red circles] each form a tight cluster, but each cluster sits in a \emph{different} region. One donor's cells might be dominated by senescence. Another donor's cells are dominated by interferon. Another by oxidative stress.
+
+When you pool all COVID cells together, the aggregate looks highly dispersed --- because you're mixing cells from different regions. But within any single donor, the cells are actually quite coherent.
+
+This tells us something biologically important: the heterogeneity is \emph{between donors}, not within donors. Each patient's lung responds differently to the virus, but within one patient the cells respond in a relatively coordinated way. The `fan-out' is a population-level phenomenon, not a per-patient phenomenon.''
+\end{speaknote}
+
+\begin{resultbox}
+This is the conceptual ``aha moment'' of the talk. Make sure the audience understands the resolution: pooling creates apparent dispersion. The biological story is about inter-patient heterogeneity in injury response, not universal intra-patient chaos.
+\end{resultbox}
+
+\begin{pitfall}
+Someone might ask: ``Doesn't this undermine your main finding?'' Answer: ``No --- it \emph{refines} it. The cell-level dispersion is real and replicates massively. But now we know its source: it comes from different patients landing in different injury states, not from individual patients having internally chaotic cells. That's actually a more interesting and clinically relevant finding --- it suggests patient-specific injury trajectories.''
+\end{pitfall}
+
+\textbf{Transition:} ``Given that marker-based approaches have limitations, we developed continuous scores that work across cohorts.''
+
+
+% =========================================================================
+\section{Slide 12 --- Portable State Scores}
+% =========================================================================
+
+\subsection{What is on the slide}
+
+A table of 6 continuous state scores, what each measures, and its AUC for detecting transitional cells. The coherence loss score is highlighted at AUC = 0.972. Below: all 6 scores achieve $p < 10^{-300}$ in the replication cohort.
+
+\subsection{What to tell the audience}
+
+\begin{speaknote}
+``One thing we discovered is that marker-threshold approaches --- saying `a cell is transitional if it expresses KRT8 and CLDN4 above some cutoff' --- don't work across cohorts. Different studies have different normalization, different sequencing depths, and the same threshold gives opposite results.
+
+So we developed six continuous scores. Instead of a binary yes/no, each cell gets a number reflecting how much of a given property it has.
+
+The first three are identity scores: how AT2-like, how AT1-like, and how transitional a cell looks.
+
+The fourth is an injury composite: the average activation of six injury-related gene programs.
+
+The fifth is the star of the show: coherence loss. It's simply the Euclidean distance from each cell to the centroid of healthy cells in PCA space. Higher means further from healthy. It achieves AUC of 0.972 for detecting annotated transitional cells --- near-perfect, without any marker thresholds.
+
+The sixth is repair failure: transitional score minus half the sum of AT2 and AT1 identity. High values mean cells that started differentiating but didn't arrive at either homeostatic endpoint.
+
+All six scores separate COVID from healthy with $p < 10^{-300}$ in the replication cohort. Geometry-based scores transfer where marker thresholds fail.''
+\end{speaknote}
+
+\begin{jargon}{AUC (Area Under the ROC Curve)}
+A number from 0 to 1 measuring how well a score separates two classes. AUC = 0.5 means random chance. AUC = 1.0 means perfect separation. AUC = 0.972 means the coherence-loss score almost perfectly distinguishes transitional from non-transitional cells, without using any marker thresholds in its definition.
+\end{jargon}
+
+\begin{whyblock}
+This slide demonstrates a practical methodological contribution: if you want to quantify injury across cohorts, don't use marker cutoffs --- use geometry. The coherence-loss score is essentially free (just a distance calculation) and outperforms everything else.
+\end{whyblock}
+
+\textbf{Transition:} ``Now that we know cells fan out, we can ask: which biological programs are responsible?''
+
+
+% =========================================================================
+\section{Slide 13 --- Mechanistic Decomposition: What Drives the Fan-Out?}
+% =========================================================================
+
+\subsection{What is on the slide}
+
+Left column: a regression table showing which gene programs contribute most to distance from healthy (senescence +6.83, oxidative stress +3.83, NF-$\kappa$B +1.95, AT2 identity $-$1.13, AT1 identity $-$1.02). $R^2 = 0.115$. Right column: interpretation text about divergent stress/senescence programs and the repair-stall finding.
+
+\subsection{What to tell the audience}
+
+\begin{speaknote}
+``We know cells fan out. But \emph{what pushes them apart}? We regressed each cell's distance from the healthy centroid on its scores for all 8 gene programs.
+
+The top three positive contributors are senescence, oxidative stress, and NF-$\kappa$B inflammation. These are the programs that, when activated, push cells furthest from healthy.
+
+The negative contributors are AT2 identity and AT1 identity. Cells retaining their normal homeostatic identity stay close to the healthy centroid --- as expected.
+
+The $R^2$ is 0.115 --- meaning these 8 programs collectively explain about 12\% of the spatial variance. That might sound low, but it's 8 programs trying to explain a 50-dimensional space. The point isn't perfect prediction --- it's identifying the \emph{directions} of the fan-out.
+
+There's also a repair-stall finding: we computed the ratio of differentiation to apoptosis scores across pseudotime bins. In healthy cells, differentiation stays higher than apoptosis at late pseudotime --- cells complete the repair. In COVID cells, apoptosis overtakes differentiation. Cells start to repair but get diverted toward death instead of reaching the AT1 endpoint.''
+\end{speaknote}
+
+\begin{resultbox}
+The biological narrative: senescence and oxidative stress are the main engines of the fan-out. Cells that lose AT2 identity and activate stress programs are the ones that scatter furthest. And among cells that start the repair trajectory, COVID cells are more likely to die than complete the journey.
+\end{resultbox}
+
+\begin{pitfall}
+Someone might challenge: ``$R^2 = 0.12$ is low --- are these programs really explaining anything?'' Answer: ``We're explaining a 50-dimensional manifold with 8 hand-picked programs. The rest of the variance is captured by thousands of genes not in our curated lists. The regression identifies which \emph{curated processes} contribute most to the fan-out direction --- it's not meant as a full prediction model.''
+\end{pitfall}
+
+\textbf{Transition:} ``Let me show you one finding that does NOT work across cohorts.''
+
+
+% =========================================================================
+\section{Slide 14 --- Transitional Cells: Enriched but Not Portable}
+% =========================================================================
+
+\subsection{What is on the slide}
+
+Left: the transitional cell figure (UMAP highlighting, composition, markers). Right: primary atlas shows 3.1$\times$ enrichment in COVID, but replication gives 0.48$\times$ (opposite direction). Lesson: marker-threshold definitions don't transfer.
+
+\subsection{What to tell the audience}
+
+\begin{speaknote}
+``In our primary atlas, transitional cells --- the ones stuck mid-repair --- are 3.1 times more common in COVID than in healthy lungs. 8.5\% versus 2.7\%. That's consistent with what other groups have reported.
+
+But here's the honest part: when we tried to replicate this using the same KRT8$^+$/CLDN4$^+$ threshold definition in the 618-donor replication cohort, we got the \emph{opposite} result. COVID had \emph{fewer} cells above the threshold.
+
+Why? Because marker-threshold definitions are not portable. Different studies use different protocols, different normalization, and the same absolute expression cutoff means different things. A cell with KRT8 expression of 2.0 in one dataset might be transitional; in another dataset, 2.0 might be background.
+
+This is why we developed continuous scores. The dispersion finding and the state scores replicate perfectly. The marker-threshold finding does not. We consider this retracted as a cross-cohort finding, and we report it honestly.''
+\end{speaknote}
+
+\begin{whyblock}
+This slide is about intellectual honesty. Many papers would just not mention the replication failure. We show it explicitly because it reinforces the methodological lesson: geometry transfers, thresholds don't. And it motivates why the portable state scores (previous slide) are necessary.
+\end{whyblock}
+
+\textbf{Transition:} ``Now let me show you how we stress-tested everything.''
+
+
+% =========================================================================
+\section{Slide 15 --- Ten Ablations: Stress Testing Robustness}
+% =========================================================================
+
+\subsection{What is on the slide}
+
+The ablation matrix figure --- a heatmap showing 10 ablation conditions as rows and key metrics as columns, color-coded green (robust) or red (fragile).
+
+\subsection{What to tell the audience}
+
+\begin{speaknote}
+``An ablation means: change one thing about the pipeline and see if the conclusion survives. We did ten.
+
+We tested: using only AT2 cells, different embedding methods, with and without batch correction, removing apoptosis genes, trying different trajectory roots, including airway cells, leaving out each donor one at a time, swapping gene lists, using a different trajectory algorithm, and shuffling labels.
+
+The result: dispersion and pseudotime direction are robust across \emph{all ten} ablations. They survive everything we throw at them.
+
+But fine-grained program ordering --- the specific ranking of which program scores highest --- that's fragile. Swap the gene lists and the ordering inverts. We consider this hypothesis-generating only, not a firm claim.
+
+This is exactly the kind of table a reviewer wants to see. It tells them which findings they can trust and which ones need more work.''
+\end{speaknote}
+
+\begin{jargon}{ablation}
+Borrowed from machine learning: systematically remove or change one component of a system to understand its contribution. If the result survives the removal, that component wasn't driving it. If it breaks, that component was load-bearing.
+\end{jargon}
+
+\begin{resultbox}
+The punchline: robustness is not binary. Some findings are ironclad (dispersion), some are directionally correct but magnitude-sensitive (pseudotime shift), and some are genuinely fragile (program ordering). Knowing which is which is the point of ablations.
+\end{resultbox}
+
+\textbf{Transition:} ``One ablation deserves its own slide because it caught a real bug.''
+
+
+% =========================================================================
+\section{Slide 16 --- The Harmony Bug}
+% =========================================================================
+
+\subsection{What is on the slide}
+
+Four bullets: the bug (matrix orientation wrong between PyTorch and CPU backends), the fix (one-line shape check), the consequence (2.6$\times$ amplification of pseudotime shift), and the moral.
+
+\subsection{What to tell the audience}
+
+\begin{speaknote}
+``This is a cautionary tale. When we first ran the pipeline, batch correction with Harmony didn't seem to help much. The pseudotime shift was small with or without it. We almost wrote `batch correction has minimal effect.'
+
+But during the ablation process, we noticed something strange. Digging in, we found a one-line bug: the Harmony Python library changed its output format between backends. The old CPU backend returned a matrix shaped (PCs $\times$ cells). The new PyTorch backend returns (cells $\times$ PCs). Our wrapper always transposed, which was correct for the old backend and \emph{wrong} for the new one. We were feeding garbage into downstream analysis and didn't notice because PCA has no `right side up.'
+
+One-line fix: check the shape and transpose only if needed.
+
+After fixing it, the pseudotime shift jumped from +0.048 to +0.125 --- a 2.6-fold amplification. Harmony was always helping; we just had a broken implementation.
+
+The moral: when a tool `doesn't help,' it might mean the tool is misconfigured, not that the method is useless. Ablations are how you catch this kind of thing.''
+\end{speaknote}
+
+\begin{whyblock}
+This slide serves two purposes: (1) it demonstrates why systematic ablations are worth the effort --- they catch real bugs; (2) it signals transparency --- we are showing you our mistakes, not hiding them. Audiences trust speakers who show their debugging process.
+\end{whyblock}
+
+\begin{pitfall}
+Someone might ask: ``How do you know the post-fix result is correct and not the pre-fix?'' Answer: ``We validated by checking that Harmony-corrected coordinates show donors mixing (which is what Harmony is supposed to do). Pre-fix, donors were \emph{not} mixing --- confirming the input was wrong. Post-fix, they mix properly.''
+\end{pitfall}
+
+\textbf{Transition:} ``Now let's see what happens when we test all of this in completely independent data.''
+
+
+% =========================================================================
+\section{Slide 17 --- Independent Replication: What Transfers?}
+% =========================================================================
+
+\subsection{What is on the slide}
+
+A table with five rows: Dispersion (replicates strongly), Pseudotime direction (replicates at donor level), Centroid displacement (fails in both --- replicates), DATP threshold (reverses --- does not replicate), State scores (all replicate with $p < 10^{-300}$).
+
+\subsection{What to tell the audience}
+
+\begin{speaknote}
+``This table is the credibility test. Did our findings hold up in 618 donors from 35 completely different studies?
+
+Row 1: Dispersion. Yes --- emphatically. $p \approx 10^{-137}$, ratio 1.65$\times$. Slightly smaller than our primary atlas but overwhelmingly significant.
+
+Row 2: Pseudotime direction. Yes, at the donor level ($p = 0.002$). The cell-level test fails because the replication cohort is imbalanced (4,400 COVID vs 85,000 normal cells, dominated by a few large normal donors). But when we properly aggregate to donor-level medians, it works.
+
+Row 3: Centroid displacement fails in both cohorts. This is actually a \emph{replication} --- the absence of displacement is reproducible.
+
+Row 4: DATP marker threshold. Does NOT replicate. Reversed direction. We retract this as a portable finding.
+
+Row 5: All 6 continuous state scores separate COVID from healthy with $p < 10^{-300}$ in replication.
+
+The bottom line: geometric findings --- dispersion, direction --- are portable. Annotation-dependent findings --- marker thresholds, program ordering --- are not. This is the methodological lesson.''
+\end{speaknote}
+
+\begin{resultbox}
+This is the ``money table.'' It separates what you can trust from what you can't. Green rows = portable, generalizable science. Red rows = single-cohort artifacts. The audience should remember this distinction.
+\end{resultbox}
+
+\textbf{Transition:} ``Let me now put all the evidence together in one summary.''
+
+
+% =========================================================================
+\section{Slide 18 --- Summary of Evidence}
+% =========================================================================
+
+\subsection{What is on the slide}
+
+A summary table with columns: Finding, Primary, Ablations, Replication, Verdict. Six rows covering all major findings with verdicts ranging from ``Strong'' to ``Fragile.''
+
+\subsection{What to tell the audience}
+
+\begin{speaknote}
+``This is the scoreboard.
+
+Dispersion: strong in primary, robust across all 10 ablations, replicates massively. Verdict: \textbf{strong}.
+
+Pseudotime shift: significant in primary, survives all 27 leave-one-donor-out iterations, replicates at donor level. Verdict: \textbf{robust}.
+
+Donor-level OLS: $p = 0.013$ at $n = 27$. Not tested in ablations or replication yet. Verdict: \textbf{supported}.
+
+Centroid displacement: $p = 1.0$ in primary, fails in all ablations, fails in replication. Verdict: \textbf{ruled out} --- as a mechanism, not as a finding. The absence is informative.
+
+DATP threshold: enriched in primary, but reverses in replication. Verdict: \textbf{not portable}.
+
+Fine program ordering: varies across ablations, inverts under different gene lists. Verdict: \textbf{fragile}.
+
+We are proud of this table because it's honest. Not everything worked. But knowing \emph{what} didn't work is valuable.''
+\end{speaknote}
+
+\begin{whyblock}
+This slide gives the audience a mental framework for evaluating single-cell genomics claims: always ask (1) did it replicate? (2) did it survive ablations? If the answer to both is no, treat it as hypothesis-generating.
+\end{whyblock}
+
+\textbf{Transition:} ``Let me state the conclusion simply.''
+
+
+% =========================================================================
+\section{Slide 19 --- The Conclusion in One Paragraph}
+% =========================================================================
+
+\subsection{What is on the slide}
+
+Three sentences in large font summarizing the entire project's conclusion.
+
+\subsection{What to tell the audience}
+
+\begin{speaknote}
+``Lethal COVID-19 does not push alveolar epithelial cells coherently away from the healthy state. Instead, it fans them outward across heterogeneous injury states --- driven by divergent senescence, oxidative stress, and inflammatory programs --- while each donor's cells occupy a different region of injury space.
+
+The strongest, most portable finding is within-group dispersion, which replicates across 35 datasets and 618 donors.
+
+That's the story in three sentences. Dispersion, not displacement. Between-donor heterogeneity, not within-donor chaos. And continuous geometric measures beat categorical marker thresholds for cross-cohort portability.''
+\end{speaknote}
+
+\begin{resultbox}
+This is the slide to slow down on. Read it almost word for word. Let it land. The audience should walk away being able to repeat these three sentences to someone else.
+\end{resultbox}
+
+\textbf{Transition:} ``What are the broader lessons for computational systems biology?''
+
+
+% =========================================================================
+\section{Slide 20 --- Key Takeaways for Computational Systems Biology}
+% =========================================================================
+
+\subsection{What is on the slide}
+
+Six numbered methodological takeaways.
+
+\subsection{What to tell the audience}
+
+\begin{speaknote}
+``Let me leave you with six methodological takeaways that apply beyond this specific project:
+
+\textbf{One}: Pre-register opposing hypotheses. Design tests where one outcome rules out a specific mechanism. A failing test is informative --- don't treat it as negative.
+
+\textbf{Two}: For heterogeneous disease states, test dispersion, not just centroid displacement. If all you measure is the mean, you miss the spread.
+
+\textbf{Three}: Use donor-level pseudobulk, not cell-level tests. Your sample size is 27 donors, not 22,000 cells. Cells from one donor are not independent.
+
+\textbf{Four}: For cross-cohort transfer, use continuous geometry-based scores, not marker thresholds. Thresholds break. Distances don't.
+
+\textbf{Five}: Run ablations. They catch bugs --- exhibit A is the Harmony orientation fix. They also tell you which findings are fragile versus robust.
+
+\textbf{Six}: Report honestly what fails. Showing that DATP marker enrichment doesn't replicate is just as valuable as showing that dispersion does.''
+\end{speaknote}
+
+\begin{whyblock}
+These are the ``take-home'' points that generalize to any single-cell project. An audience member working on a completely different tissue or disease should still find these useful. Frame them as lessons for the field, not just for this study.
+\end{whyblock}
+
+\textbf{Transition:} ``Of course, there are limitations.''
+
+
+% =========================================================================
+\section{Slide 21 --- Limitations}
+% =========================================================================
+
+\subsection{What is on the slide}
+
+Seven bullet-point limitations.
+
+\subsection{What to tell the audience}
+
+\begin{speaknote}
+``We want to be explicit about what we cannot claim.
+
+First: this is post-mortem, lethal cases only. We say nothing about mild or moderate COVID. These are the worst-case endpoints.
+
+Second: 27 donors is small. The bootstrap confidence interval for pseudotime difference marginally includes zero. The replication cohort helps, but full-transcriptome donor-level replication would be stronger.
+
+Third: pseudotime is an ordering, not a clock. We don't know if cells at pseudotime 0.8 have been injured for hours or days.
+
+Fourth: the replication cohort only has 84 genes. That's enough for scoring programs and computing dispersion, but not enough to build an independent trajectory from scratch.
+
+Fifth: fine program ordering inverts under different gene lists. We consider program ordering hypothesis-generating only.
+
+Sixth: DATP marker thresholds don't transfer. We retract that as a cross-cohort claim.
+
+Seventh: post-mortem effects. Dying patients experience hypoxia, ischemia, and medication effects. Some of the stress/apoptosis signal might reflect peri-mortem processes, not COVID-specific injury. We can't fully separate these.''
+\end{speaknote}
+
+\begin{pitfall}
+The most likely challenging question: ``If it's only lethal cases, how do you know this is specific to COVID and not just dying in general?'' Answer: ``We compare against healthy donors (not against other causes of death), so we're measuring COVID-vs-healthy, not COVID-vs-dying. This is a limitation of the available data. An ideal comparison would include non-COVID ARDS deaths, but those aren't in this cohort.''
+\end{pitfall}
+
+\begin{resultbox}
+Presenting limitations confidently, rather than defensively, builds credibility. The audience should feel that you've already thought about their concerns.
+\end{resultbox}
+
+\textbf{Transition:} ``And that's the complete story. Thank you --- I'm happy to take questions.''
+
+
+% =========================================================================
+\section{Slide 22 --- Thank You / Questions}
+% =========================================================================
+
+\subsection{What is on the slide}
+
+A standout frame (full-color background) with ``Thank you. Questions?''
+
+\subsection{What to tell the audience}
+
+\begin{speaknote}
+``Thank you for your attention. I'm happy to answer questions about any part of the analysis --- the biology, the statistics, the pipeline, or the replication. Also happy to discuss how these methods could apply to other systems.''
+\end{speaknote}
+
+\subsection{Anticipated questions and answers}
+
+\begin{enumerate}[leftmargin=*]
+
+\item \textbf{``Why not use a mixed-effects model instead of OLS?''}
+
+With one observation per donor, a random intercept for donor is mathematically degenerate --- each donor contributes exactly one row. A random intercept for ``study'' would make sense in the multi-study replication cohort, but not in the single-study primary atlas.
+
+\item \textbf{``Could the dispersion finding be driven by cell-type composition differences?''}
+
+We tested this: even within AT2 cells only (Ablation 1), dispersion is significant. The effect is not driven by having more AT1 or transitional cells in the COVID group.
+
+\item \textbf{``How do you know pseudotime isn't just capturing cell-type identity?''}
+
+AT2 identity and pseudotime are correlated ($\rho = -0.70$), but they're not redundant. Pseudotime captures a continuous gradient that includes multiple programs (differentiation, stress, senescence) beyond just AT2-ness. The diffusion map integrates all 50 PCs, not just the AT2 marker axis.
+
+\item \textbf{``Is 0.048 pseudotime units biologically meaningful?''}
+
+As an absolute number, it's modest (5\% of range). But: (a) it's statistically significant by permutation; (b) it survives all ablations; (c) it replicates in an independent cohort; (d) donor-level OLS gives $p = 0.013$. The effect is real. Whether 5\% of a pseudotime range matters clinically is a different question --- pseudotime has no physical units.
+
+\item \textbf{``What would you do differently if you could start over?''}
+
+We would use a full-transcriptome replication cohort instead of 84 genes. We would include non-COVID ARDS deaths as a comparison group. And we would pre-register even more formally (e.g., on OSF) before touching the data.
+
+\item \textbf{``Can you explain the coherence loss score more simply?''}
+
+Take all the healthy cells. Find their center point in gene-expression space. For every cell in the dataset, measure how far it is from that healthy center. That distance is the coherence loss score. Cells far from healthy get high scores. It's computationally trivial --- just a distance calculation --- but it captures the transitional phenotype with AUC = 0.972.
+
+\item \textbf{``Why does the DATP enrichment reverse in replication?''}
+
+Different studies use different sequencing depths, normalization methods, and sample preparation protocols. An absolute expression threshold that means ``transitional'' in one study means ``background noise'' in another. This is exactly why continuous scores are better than binary thresholds.
+
+\item \textbf{``What's the clinical implication?''}
+
+Our study is methodological, not directly clinical. But if the finding is real --- that each patient's lung cells respond differently --- it suggests that therapeutic targets might need to be patient-specific rather than one-size-fits-all. The specific programs driving a given patient's cells away from healthy might vary.
+
+\end{enumerate}
+
+
+% =========================================================================
+\section{General Presentation Tips}
+% =========================================================================
+
+\begin{itemize}
+\item \textbf{Pace}: Aim for about 1.5--2 minutes per slide. The whole talk should be 30--40 minutes depending on audience engagement.
+\item \textbf{Emphasis}: The three most important slides are 8 (dispersion), 11 (donor-level surprise), and 17 (replication). Spend extra time on these.
+\item \textbf{If time is short}: You can skip slides 6 (pipeline), 16 (Harmony bug), and 14 (transitional cells). These add depth but aren't essential to the main arc.
+\item \textbf{Narrative arc}: Question (slide 2) $\to$ Data/Methods (slides 4--7) $\to$ Core results (slides 8--11) $\to$ Deeper findings (slides 12--14) $\to$ Robustness (slides 15--17) $\to$ Synthesis (slides 18--20) $\to$ Honesty (slide 21).
+\item \textbf{Audience engagement}: After slide 8 (dispersion), pause and ask ``Does anyone have questions about the dispersion metric before I continue?'' This gives non-statisticians a chance to catch up.
+\item \textbf{Pointing}: When showing figures, physically point to specific panels. Don't just say ``as you can see'' --- guide the audience's eyes.
+\item \textbf{Numbers}: Don't read every $p$-value. Instead, say ``extremely significant'' or ``clearly non-significant.'' Reserve exact numbers for the three that matter: Levene $p < 10^{-30}$, displacement $p = 1.0$, and permutation $p = 0.001$.
+\end{itemize}
+
+
+\end{document}

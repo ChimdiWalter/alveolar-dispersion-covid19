@@ -1,0 +1,86 @@
+program,gene,source
+AT2_identity,SFTPC,curated from lung atlas literature
+AT2_identity,SFTPA1,curated from lung atlas literature
+AT2_identity,SFTPA2,curated from lung atlas literature
+AT2_identity,ABCA3,curated from lung atlas literature
+AT2_identity,LAMP3,curated from lung atlas literature
+AT2_identity,SLC34A2,curated from lung atlas literature
+AT2_identity,NAPSA,curated from lung atlas literature
+AT2_identity,PGC,curated from lung atlas literature
+AT2_identity,LPCAT1,curated from lung atlas literature
+AT1_identity,AGER,curated from lung atlas literature
+AT1_identity,PDPN,curated from lung atlas literature
+AT1_identity,HOPX,curated from lung atlas literature
+AT1_identity,CLIC5,curated from lung atlas literature
+AT1_identity,CAV1,curated from lung atlas literature
+AT1_identity,EMP2,curated from lung atlas literature
+AT1_identity,AKAP5,curated from lung atlas literature
+AT1_identity,RTKN2,curated from lung atlas literature
+interferon_response,ISG15,MSigDB Hallmark Interferon Alpha/Gamma
+interferon_response,IFI6,MSigDB Hallmark Interferon Alpha/Gamma
+interferon_response,IFIT1,MSigDB Hallmark Interferon Alpha/Gamma
+interferon_response,IFIT3,MSigDB Hallmark Interferon Alpha/Gamma
+interferon_response,MX1,MSigDB Hallmark Interferon Alpha/Gamma
+interferon_response,MX2,MSigDB Hallmark Interferon Alpha/Gamma
+interferon_response,OAS1,MSigDB Hallmark Interferon Alpha/Gamma
+interferon_response,OAS2,MSigDB Hallmark Interferon Alpha/Gamma
+interferon_response,STAT1,MSigDB Hallmark Interferon Alpha/Gamma
+interferon_response,IRF7,MSigDB Hallmark Interferon Alpha/Gamma
+interferon_response,BST2,MSigDB Hallmark Interferon Alpha/Gamma
+interferon_response,IFI44L,MSigDB Hallmark Interferon Alpha/Gamma
+interferon_response,IFITM3,MSigDB Hallmark Interferon Alpha/Gamma
+nfkb_inflammatory,NFKB1,MSigDB Hallmark TNF-alpha/NF-kB
+nfkb_inflammatory,RELA,MSigDB Hallmark TNF-alpha/NF-kB
+nfkb_inflammatory,TNF,MSigDB Hallmark TNF-alpha/NF-kB
+nfkb_inflammatory,IL6,MSigDB Hallmark TNF-alpha/NF-kB
+nfkb_inflammatory,IL1B,MSigDB Hallmark TNF-alpha/NF-kB
+nfkb_inflammatory,CXCL8,MSigDB Hallmark TNF-alpha/NF-kB
+nfkb_inflammatory,CCL2,MSigDB Hallmark TNF-alpha/NF-kB
+nfkb_inflammatory,ICAM1,MSigDB Hallmark TNF-alpha/NF-kB
+nfkb_inflammatory,PTGS2,MSigDB Hallmark TNF-alpha/NF-kB
+nfkb_inflammatory,SOD2,MSigDB Hallmark TNF-alpha/NF-kB
+nfkb_inflammatory,BIRC3,MSigDB Hallmark TNF-alpha/NF-kB
+nfkb_inflammatory,TNFAIP3,MSigDB Hallmark TNF-alpha/NF-kB
+oxidative_stress,SOD1,MSigDB Hallmark Reactive Oxygen Species
+oxidative_stress,SOD2,MSigDB Hallmark Reactive Oxygen Species
+oxidative_stress,GPX1,MSigDB Hallmark Reactive Oxygen Species
+oxidative_stress,GPX4,MSigDB Hallmark Reactive Oxygen Species
+oxidative_stress,CAT,MSigDB Hallmark Reactive Oxygen Species
+oxidative_stress,TXN,MSigDB Hallmark Reactive Oxygen Species
+oxidative_stress,HMOX1,MSigDB Hallmark Reactive Oxygen Species
+oxidative_stress,NQO1,MSigDB Hallmark Reactive Oxygen Species
+oxidative_stress,GCLC,MSigDB Hallmark Reactive Oxygen Species
+oxidative_stress,GCLM,MSigDB Hallmark Reactive Oxygen Species
+oxidative_stress,NFE2L2,MSigDB Hallmark Reactive Oxygen Species
+oxidative_stress,PRDX1,MSigDB Hallmark Reactive Oxygen Species
+AT2_to_AT1_differentiation,KRT8,"Kobayashi et al. 2020, Strunz et al. 2020"
+AT2_to_AT1_differentiation,CLDN4,"Kobayashi et al. 2020, Strunz et al. 2020"
+AT2_to_AT1_differentiation,SFN,"Kobayashi et al. 2020, Strunz et al. 2020"
+AT2_to_AT1_differentiation,KRT18,"Kobayashi et al. 2020, Strunz et al. 2020"
+AT2_to_AT1_differentiation,LGALS3,"Kobayashi et al. 2020, Strunz et al. 2020"
+AT2_to_AT1_differentiation,HOPX,AT1 terminal marker
+AT2_to_AT1_differentiation,AGER,AT1 terminal marker
+AT2_to_AT1_differentiation,PDPN,AT1 terminal marker
+apoptosis,BAX,MSigDB Hallmark Apoptosis + curated
+apoptosis,BAK1,MSigDB Hallmark Apoptosis + curated
+apoptosis,CASP3,MSigDB Hallmark Apoptosis + curated
+apoptosis,CASP7,MSigDB Hallmark Apoptosis + curated
+apoptosis,CASP9,MSigDB Hallmark Apoptosis + curated
+apoptosis,BCL2L11,MSigDB Hallmark Apoptosis + curated
+apoptosis,BID,MSigDB Hallmark Apoptosis + curated
+apoptosis,PMAIP1,MSigDB Hallmark Apoptosis + curated
+apoptosis,BBC3,MSigDB Hallmark Apoptosis + curated
+apoptosis,CYCS,MSigDB Hallmark Apoptosis + curated
+apoptosis,APAF1,MSigDB Hallmark Apoptosis + curated
+apoptosis,FAS,MSigDB Hallmark Apoptosis + curated
+apoptosis,FASLG,MSigDB Hallmark Apoptosis + curated
+senescence,CDKN1A,SenMayo gene set + curated
+senescence,CDKN2A,SenMayo gene set + curated
+senescence,TP53,SenMayo gene set + curated
+senescence,RB1,SenMayo gene set + curated
+senescence,SERPINE1,SenMayo gene set + curated
+senescence,GLB1,SenMayo gene set + curated
+senescence,IGFBP7,SenMayo gene set + curated
+senescence,CCL2,SenMayo gene set + curated
+senescence,IL6,SenMayo gene set + curated
+senescence,MMP1,SenMayo gene set + curated

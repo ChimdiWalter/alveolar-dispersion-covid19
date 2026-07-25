@@ -1,0 +1,32 @@
+{
+  "median_pseudotime": {
+    "metric": "median_pseudotime",
+    "observed_diff": 0.041426077485084534,
+    "ci_lower": -0.013311576098203659,
+    "ci_upper": 0.08630990982055664,
+    "ci_level": 0.95,
+    "n_bootstrap": 10000,
+    "boot_mean": 0.043728754398971795,
+    "boot_std": 0.027826431942296618
+  },
+  "within_donor_dispersion": {
+    "metric": "within_donor_dispersion",
+    "observed_diff": 6.835036277770996,
+    "ci_lower": -30.656395435333252,
+    "ci_upper": 16.458528518676758,
+    "ci_level": 0.95,
+    "n_bootstrap": 10000,
+    "boot_mean": 2.8083014456510544,
+    "boot_std": 12.212890194040657
+  },
+  "frac_transitional": {
+    "metric": "frac_transitional",
+    "observed_diff": 0.008929868318925751,
+    "ci_lower": -0.05285553141490809,
+    "ci_upper": 0.020325126410817553,
+    "ci_level": 0.95,
+    "n_bootstrap": 10000,
+    "boot_mean": -0.0010675811811788568,
+    "boot_std": 0.020413367513256165
+  }
+}
