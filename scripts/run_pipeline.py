@@ -280,6 +280,9 @@ def main():
     logger.info(f"Step: {args.step}")
     logger.info(f"Config: {args.config or 'config.yaml (default)'}")
 
+    from src.provenance import save_provenance
+    save_provenance(cfg, step=args.step)
+
     if args.step in ("load_and_inspect", "all"):
         adata = step_load_and_inspect(cfg, logger)
         if args.step == "load_and_inspect":
