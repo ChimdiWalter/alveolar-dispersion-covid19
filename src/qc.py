@@ -77,8 +77,8 @@ def apply_qc_filters(adata: "sc.AnnData", cfg: dict) -> "sc.AnnData":
         adata = adata[adata.obs["n_genes_by_counts"] < qc["max_genes_per_cell"]].copy()
     if qc.get("max_total_counts"):
         adata = adata[adata.obs["total_counts"] < qc["max_total_counts"]].copy()
-    if qc.get("max_pct_mt"):
-        adata = adata[adata.obs["pct_counts_mt"] < qc["max_pct_mt"]].copy()
+    if qc.get("max_pct_mito"):
+        adata = adata[adata.obs["pct_counts_mt"] < qc["max_pct_mito"]].copy()
 
     # Gene filters
     sc.pp.filter_genes(adata, min_cells=qc.get("min_cells_per_gene", 10))
