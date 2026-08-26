@@ -46,12 +46,14 @@ See also: `manuscript/paper_v3_FIGURE_STORY.md` for the full narrative logic.
 **Caption concept:** The pseudotime shift and dispersion are robust across all perturbations that preserve the alveolar compartment. Fine program ordering is sensitive to gene-list choice.
 **Code module:** Custom notebook function
 **Output:** `results/figures/fig6_ablation.pdf`
+**Known limitation (2026-08-25):** panel (c)'s displacement-r column is currently constant by construction across ablations 02/03/05/08/09 (see Table S6's matching note) — not yet an informative robustness result. Becomes meaningful after ANALYSIS_PLAN.md §9 Follow-up 2 / RUNBOOK.md Step 14.
 
 ### Figure 7: Replication summary
 **Panels:** (a) Replication dispersion violin. (b) Donor-level injury composite. (c) Per-program replication heatmap. (d) Portability matrix: rows=findings, columns=[primary, replication, portable?].
 **Caption concept:** Geometric signatures (dispersion, donor-level direction) are portable; annotation-dependent signatures (DATP threshold, specific program peaks) are not.
 **Code module:** Custom notebook function
 **Output:** `results/figures/fig7_replication.pdf`
+**Planned extension (2026-08-25):** once ANALYSIS_PLAN.md §9 Follow-up 1 / RUNBOOK.md Step 13 (expanded-panel replication, Table S9) runs, panel (d)'s portability matrix should distinguish "replicated under 84-gene panel" from "replicated under expanded/full-transcriptome panel" — the current single-column matrix can't make that distinction.
 
 ---
 
