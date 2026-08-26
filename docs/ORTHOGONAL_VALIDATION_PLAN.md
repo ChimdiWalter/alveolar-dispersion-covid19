@@ -1,5 +1,14 @@
 # Orthogonal Validation Plan
 
+> **Status (as of 2026-08-25):** All planned orthogonal validation analyses below
+> (spatial transcriptomics, pathology linkage, RNA velocity, histology) remain
+> **not started** — no relevant data exists in the repo. One exception: ablation 9
+> (Palantir, an alternative trajectory algorithm) is complete
+> (`results/ablations/09_palantir/metrics.csv`/`.json` have real computed values)
+> and is orthogonal-validation-*adjacent*, but it belongs to the ablations suite —
+> a different, already-completed robustness check — not to O1–O4 below, which
+> remain entirely unimplemented.
+
 ## Goal
 Strengthen the manuscript with validation axes beyond the primary snRNA-seq trajectory analysis.
 
