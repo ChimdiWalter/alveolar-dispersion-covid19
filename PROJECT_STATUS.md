@@ -232,7 +232,7 @@ tracked as follow-up test cases in `ANALYSIS_PLAN.md` §9.
 - **Ablation 1 (AT2-only) flips the displacement sign entirely**
   (`r = +0.14 → -0.29`, per `results/ablations/01_at2_only/metrics.json`) and is
   not mentioned anywhere in the manuscript.
-- Not fixed on this branch (documentation-only per decision) — tracked as
+- Not fixed (documentation-only per decision) — tracked as
   Follow-up 2 / `RUNBOOK.md` Step 14 (and the AT2-only sign flip as Follow-up 3
   / Step 15) in `ANALYSIS_PLAN.md` §9.
 

@@ -6,12 +6,14 @@ status claims here can be independently checked, not just trusted.
 
 ---
 
-## 2026-08-25 — Manuscript-status critical review (`pierce/manuscript-status-review`)
+## 2026-08-25 — Manuscript-status critical review
 
 A closer, evidence-based read of `manuscript/paper_v3.tex` against real
 comparable published work, plus a direct audit of the ablations and replication
-pipeline code (not a self-reported status check). Documentation-only — no code
-or manuscript numbers changed on this branch.
+pipeline code (not a self-reported status check). The changes in this entry are
+documentation-only: no code or manuscript numbers were changed by them. The
+reproducibility-harness entry below now ships on the same branch and does touch
+code; the two are separate commits.
 
 - **Journal-tier assessment corrected.** `PROJECT_STATUS.md`'s "Current paper
   level assessment" previously stated Nature Communications was "achievable
@@ -34,7 +36,7 @@ or manuscript numbers changed on this branch.
   `r = 0.1407` across all five) and `src/stats.py`'s `centroid_distance()`
   signature. Also found: ablation 1 (AT2-only) flips the displacement sign
   (`r = +0.14 → -0.29`, `results/ablations/01_at2_only/metrics.json`), not
-  disclosed in `paper_v3.tex`. Not fixed on this branch (decision: document
+  disclosed in `paper_v3.tex`. Not fixed here (decision: document
   only — code fix deferred since re-validating it needs real SCP1219 data,
   which isn't available locally). Tracked as `ANALYSIS_PLAN.md` §9 Follow-up 2
   (and the AT2-only flip as Follow-up 3).
@@ -125,12 +127,13 @@ them and left nothing runnable. Corrected:
 
 ---
 
-## 2026-08-24 — Reproducibility harness (`pierce/repro-harness`, commit `4e86330`)
+## 2026-08-24 — Reproducibility harness
 
-Prior work on a separate branch, not part of this branch's diff — listed here
-for a complete audit trail. Pushed to `piercetaylor/alveolar-dispersion-covid19`;
-CI verified green on GitHub Actions (53 passed, 0 skipped, including Harmony
-batch correction, which Linux CI can build but this Windows dev machine cannot).
+Originally developed on a separate branch and since consolidated into the same
+branch as the entry above, so both now ship as a single changeset. CI verified
+green on GitHub Actions (53 passed, 0 skipped, including Harmony batch
+correction, which Linux CI can build but this Windows dev machine cannot). The
+local suite reports 52 passed, 1 skipped, the skip being that same Harmony test.
 
 - Added a synthetic-data pytest suite (`tests/`, 12 files) — a deterministic
   fixture built from `config.yaml`'s own gene lists, plus an end-to-end smoke

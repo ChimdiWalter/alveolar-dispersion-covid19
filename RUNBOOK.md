@@ -15,9 +15,9 @@ source .venv/bin/activate
 .venv\Scripts\activate
 pip install -r requirements.txt
 ```
-**Note:** `pierce/repro-harness` (not yet merged to `main`) adds `make install` /
-`make test` targets that wrap this, plus a pinned `requirements.lock.txt` snapshot
-of exact working versions — use it if that branch is available. The paths above
+**Note:** the reproducibility harness adds `make install` / `make test` targets
+that wrap this, plus a pinned `requirements.lock.txt` snapshot of exact working
+versions — prefer those over the raw `pip install` above. The paths above
 replace the original author's machine-specific `~/.venvs/lesegenv` /
 `/deltos/e/lesion_phes/...` setup, which will not exist on any other machine.
 
@@ -362,5 +362,5 @@ displacement result here as a pipeline failure.
 | Memory error on full atlas | Dataset too large | Work on alveolar subset only; or increase available RAM |
 | `cellxgene_census` fetch too slow / exceeds disk or memory (Step 13) | Expanded/full-transcriptome gene panel across 921,510 raw alveolar cells is much larger than the original 84-gene, <1GB pull | Start with an expanded HVG-driven panel (Option A) rather than full transcriptome (Option B); tighten the per-donor cell cap in `analyze_replication.py` |
 | `FileNotFoundError` on Steps 14–15 | `data/raw/` still empty — real SCP1219 data was never downloaded to this environment | Download SCP1219 per Prerequisites §3 first; these two steps cannot run on synthetic data |
-| `harmonypy` fails to build (`CMake Error`, `nmake` not found) | No C++ build toolchain on this machine (a real issue hit on Windows dev machines) | Skip Harmony locally; it builds fine on Linux (confirmed on GitHub Actions CI in `pierce/repro-harness`) — run Harmony-dependent steps there instead |
+| `harmonypy` fails to build (`CMake Error`, `nmake` not found) | No C++ build toolchain on this machine (a real issue hit on Windows dev machines) | Skip Harmony locally; it builds fine on Linux (confirmed on GitHub Actions CI) — run Harmony-dependent steps there instead |
 | Out-of-memory building the diffusion map on an expanded-panel replication cohort (Step 13) | Full/expanded-panel h5ad too large to hold densely in memory for DPT | Keep the matrix sparse through preprocessing; subsample donors further; or run on a machine with more RAM |

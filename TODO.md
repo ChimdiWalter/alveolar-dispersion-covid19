@@ -94,7 +94,7 @@ mode" format Chimdi used for the original experiment specs).
 
 The analysis below has already been run once, on a machine that had the real
 SCP1219 data — that's what `results/` reflects. These steps are what a *new*
-environment (a fresh clone, or `pierce/repro-harness`'s reproducibility harness)
+environment (a fresh clone, or the reproducibility harness)
 needs before it can re-run anything for real.
 
 - [ ] Install Python dependencies: `pip install -r requirements.txt`
@@ -201,8 +201,8 @@ needs before it can re-run anything for real.
 
 ## Phase 9: Finalization (Week 6)
 
-- [ ] Clean and document all code — in progress on `pierce/repro-harness` (synthetic-data test suite, CI, pinned deps, provenance tracking)
-- [ ] Verify reproducibility (re-run from clean state) — blocked on real SCP1219 data access; `pierce/repro-harness` makes the *code* verifiable without real data, but a real-data re-run is still needed to confirm the numbers themselves
+- [x] Clean and document all code — all 68 public functions and classes across `src/` carry docstrings (verified by AST scan), and the synthetic-data test suite, CI, pinned deps and provenance tracking cover every `src/` module
+- [ ] Verify reproducibility (re-run from clean state) — blocked on real SCP1219 data access; the reproducibility harness makes the *code* verifiable without real data, but a real-data re-run is still needed to confirm the numbers themselves
 - [ ] Prepare oral presentation slides
 - [ ] Final review of all deliverables
 - [ ] Submit — blocked on author names/affiliations (Priority 3) and a final decision on target journal (see PROJECT_STATUS.md Phase 11)
