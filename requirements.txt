@@ -1,6 +1,12 @@
 # =============================================================================
 # Epithelial Robustness Collapse — Python Dependencies
 # Install: pip install -r requirements.txt
+#
+# For an exact, previously-verified-working set of pinned versions (incl.
+# transitive dependencies), see requirements.lock.txt instead — these are
+# floors, so what actually resolves here can drift over time and
+# scanpy/UMAP/Leiden/Harmony are all version-sensitive even with a fixed
+# random seed (config.yaml: random_seed: 42).
 # =============================================================================
 
 # --- Core scientific stack ---
@@ -14,6 +20,9 @@ scanpy>=1.9.6
 anndata>=0.10
 leidenalg>=0.10
 python-igraph>=0.11
+scikit-misc>=0.2      # required by scanpy's highly_variable_genes(flavor="seurat_v3"),
+                       # which feature_selection.method in config.yaml uses; not
+                       # previously listed even though the pipeline depends on it
 
 # --- Visualization ---
 matplotlib>=3.7
@@ -42,3 +51,6 @@ nbformat>=5.9
 
 # --- Utilities ---
 tqdm>=4.65
+
+# --- Testing ---
+pytest>=7.4

@@ -1,5 +1,12 @@
 # Generalization Plan — Beyond COVID-19
 
+> **Status (as of 2026-08-25):** `src/generalization.py` is a functional, non-stub
+> implementation (5 real functions: `harmonize_metadata`, `subset_alveolar_generic`,
+> `cross_cohort_dispersion`, `cross_cohort_donor_direction`, `portability_matrix`),
+> but it has never been run against real external data — no `data/external/`
+> directory, no `scripts/run_generalization.py` driver script, and no
+> `results/generalization/` output exist in this repo. **Scaffolded, not run.**
+
 ## Goal
 Test whether dispersion-dominated loss of alveolar epithelial state coherence generalizes beyond lethal COVID-19 to other severe lung injury contexts.
 

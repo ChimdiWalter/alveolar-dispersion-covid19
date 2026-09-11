@@ -425,6 +425,9 @@ These determine the confidence level of the primary findings.
 | **Apoptotic cell dropout** | Moderate | snRNA-seq captures nuclei from dead cells better than scRNA-seq; the most apoptotic cells may still be underrepresented |
 | **Gene set arbitrariness** | Moderate | Test alternative gene set definitions; random gene set controls |
 | **Multiple testing** | Low | BH FDR correction; Bonferroni for program-level tests; emphasis on effect sizes |
+| **Ablation coverage gap** (found 2026-08-25) | Moderate | `displacement_effect_size` not re-tested under 5/10 ablations' own embeddings (02/03/05/08/09) — `centroid_distance()` (`src/stats.py`) defaults to `rep_key="X_pca"`; mitigation: §9 Follow-up 2 / RUNBOOK Step 14 |
+| **Cell-type composition sensitivity** (found 2026-08-25) | Moderate | Ablation 1 (AT2-only) flips displacement sign (r = +0.14 → -0.29); mitigation: §9 Follow-up 3 / RUNBOOK Step 15 |
+| **Unvalidated mechanism regression** (found 2026-08-25) | Moderate | `results/v3/fan_out_contribution.csv` is unregularized OLS with no p-values or cross-validation; mitigation: §9 Follow-up 4 / RUNBOOK Step 16 |
 
 ### External validity threats
 
@@ -435,6 +438,7 @@ These determine the confidence level of the primary findings.
 | **Unknown disease duration** | Moderate | Time from infection to death varies; "pseudotime" within the tissue may not align with clinical timeline |
 | **Post-mortem artifacts** | Low-Moderate | Tissue collected post-mortem; gene expression may not fully reflect ante-mortem biology |
 | **Generalizability to other injuries** | Speculative | Claims about "robustness collapse" as a general principle require validation in other DAD contexts |
+| **Replication cohort gene-panel restriction** (found 2026-08-25) | Moderate | The 84-gene panel supports program-score composites and marker-threshold assays but cannot support manifold/DPT reconstruction; a genuine full-transcriptome replication is untested. §9 Follow-up 1 / RUNBOOK Step 13 |
 
 ### What this study cannot claim
 1. That individual cells traverse the inferred pseudotime trajectory
@@ -449,7 +453,7 @@ These determine the confidence level of the primary findings.
 3. That a donor-aware pseudotime shift exists and is amplified by batch correction
 4. That a KRT8+/CLDN4+ transitional population is enriched in the primary atlas (but not portable under marker thresholds)
 5. That identity-program decline with pseudotime is stable; fine injury-program ordering is hypothesis-generating
-6. That these findings are robust to ablation, cross-method validation (Palantir), and independent replication
+6. That these findings are robust to ablation, cross-method validation (Palantir), and independent replication — **with one qualifier (found 2026-08-25):** the displacement metric specifically was only genuinely re-tested by half the ablation grid (5/10 ablations reused a cached primary-run value rather than recomputing under their own embedding); the dispersion and pseudotime-shift findings are not affected. See §7 internal validity threats and §9 Follow-up 2
 
 ---
 
@@ -458,23 +462,77 @@ These determine the confidence level of the primary findings.
 ### 8.1 Donor-aware inference (Essential)
 - Module: `src/donor_models.py`
 - Analyses: donor_summary, donor_level_test, donor_bootstrap_ci, donor_dispersion_comparison, mixed_effects_pseudotime, pseudobulk_expression
-- Status: Code implemented, not yet run on data
+- Status (2026-08-25): Run. Outputs: `results/v3/donor_summary.csv`, `donor_level_tests.json`, `donor_bootstrap_ci.json`, `mixed_effects.json`, `donor_dispersion*.{json,csv}`; results integrated into `manuscript/paper_v3.tex`
 
 ### 8.2 Portable state score (High value)
 - Module: `src/state_score.py`
 - Analyses: at2_identity_score, at1_identity_score, transitional_score, injury_composite_score, coherence_loss_score, repair_failure_score, benchmark_scores
-- Status: Code implemented, not yet run
+- Status (2026-08-25): Run. Outputs: `results/v3/state_scores.csv`, `state_score_benchmarks.csv`, `replication_state_benchmarks.csv`
 
 ### 8.3 Mechanistic linkage (Medium value)
 - Module: `src/mechanism.py`
 - Analyses: program_geometry_linkage, repair_stall_analysis, local_heterogeneity, fan_out_contribution
-- Status: Code implemented, not yet run
+- Status (2026-08-25): Run. Outputs: `results/v3/program_geometry_linkage.csv`, `fan_out_contribution.csv`, `repair_stall.json`. Caveat: `fan_out_contribution.csv` is an unregularized OLS with no p-values/cross-validation in the saved file — see §9 Follow-up 4
 
 ### 8.4 Cross-disease generalization (Ambitious / future)
 - Module: `src/generalization.py`
-- Plan: `docs/GENERALIZATION_PLAN.md`
+- Plan: `docs/GENERALIZATION_PLAN.md` (see its dated status header, 2026-08-25)
 - Status: Code scaffold implemented; external data not downloaded
 
 ### 8.5 Orthogonal validation (Future work)
-- Plan: `docs/ORTHOGONAL_VALIDATION_PLAN.md`
-- Status: Plan only; requires spatial, pathology, or RNA velocity data
+- Plan: `docs/ORTHOGONAL_VALIDATION_PLAN.md` (see its dated status header, 2026-08-25)
+- Status: Plan only; requires spatial, pathology, or RNA velocity data. Exception: Ablation 9 (Palantir, an alternative trajectory algorithm) is complete — orthogonal-validation-adjacent but belongs to the ablations suite, not to this plan's O1–O4
+
+---
+
+## 9. Post-Hoc Validation Follow-Ups (2026-08-25)
+
+Identified via a critical review of `paper_v3.tex` against its own ablation and replication results, cross-referenced against comparable published literature (Watson et al. 2023, *Am J Respir Cell Mol Biol*; dispersion-metrics assessment, *PLOS Comp Bio* 2025). Not yet executed; tracked here for prioritization, and made executable in `RUNBOOK.md` Steps 13–16. Two of the four (Follow-ups 1 and 4) are new experiments and use the §5 Experiment template; the other two (Follow-ups 2 and 3) are ablation-grid work and use the §6 Ablation template — each follow-up uses whichever template actually fits its shape, rather than one template for all four.
+
+### Follow-up 1: Expand the replication gene panel beyond 84 genes
+
+| Field | Value |
+|-------|-------|
+| Purpose | Test whether the primary finding (dispersion, donor-level pseudotime direction) replicates under a genuine full/expanded manifold reconstruction, not just program-score composites computed from a restricted gene panel |
+| Input | `cellxgene_census` (public, no-login API; 921,510 raw alveolar cells available, full transcriptome, per `scripts/replication/analyze_replication.py`'s docstring) |
+| Method | Edit `scripts/replication/fetch_replication.py`'s `gene_shortlist` (currently `config.yaml`'s gene-program genes + a fixed marker list, lines 31–43 — a pragmatic "<1GB download" choice per the code's own comment, not a data-source limitation) to include either a much larger HVG-driven gene set or the full transcriptome, re-fetch, and re-run `analyze_replication.py`'s dispersion/pseudotime-surrogate/DATP tests plus (if feasible) a genuine DPT/manifold reconstruction on the expanded cohort. *See RUNBOOK.md Step 13.* |
+| Primary output | Re-fetched `data/replication/replication_alveolar.h5ad` (expanded panel); refreshed `results/replication/replication_metrics.json` |
+| Plots | Updated Fig 7 (replication summary) — expanded-panel variant; see `FIGURE_PLAN.md` |
+| Tables | `results/tables/tableS9_replication_expanded_panel.csv`; see `TABLE_PLAN.md` |
+| Code module | `scripts/replication/fetch_replication.py`, `scripts/replication/analyze_replication.py` |
+| Failure mode | If dispersion and donor-level direction do NOT replicate under a genuine manifold reconstruction (vs. the current program-score-composite surrogate), that would substantially weaken the "most portable finding" claim and require re-examining whether the 84-gene program-composite approach was itself introducing an artifact |
+
+### Follow-up 2: Fix the frozen displacement-effect-size bug and re-run all 10 ablations
+
+| Field | Value |
+|-------|-------|
+| What changes | Fix `centroid_distance()` call sites (`src/stats.py`) in the ablation runner to pass each ablation's actual embedding (`X_pca_harmony` for #03, UMAP/diffmap for #02, etc.) instead of the default `rep_key="X_pca"`; then re-run all 10 ablations once real primary SCP1219 data is available locally. *See RUNBOOK.md Step 14.* |
+| Why it matters | `displacement_effect_size` is currently identical (r=0.1407) across 10 of 14 ablation-variant rows in `results/tables/tableS6_ablation_summary.csv` — 5 of 10 ablations (02 embedding, 03 batch-correction, 05 root-strategy, 08 gene-program, 09 Palantir) never actually re-tested displacement under their own perturbation. `paper_v3.tex` line 222 claims displacement was "never significant... across all ablations" — this needs to be genuinely true, not an artifact of a caching bug |
+| Compare | Re-computed `displacement_effect_size` per ablation vs. the current frozen `r=0.1407` |
+| Strengthens if | Displacement stays non-significant (opposite-to-hypothesized or null) under every ablation's own embedding — confirms the robustness claim is genuine, not a caching artifact |
+| Weakens if | Any ablation's re-computed displacement effect size becomes significant in the hypothesized direction (COVID > Healthy) once actually re-tested under its own embedding — the "displacement never significant across all ablations" claim in `paper_v3.tex` would need to be revised or caveated |
+| Output files | `results/tables/tableS6_ablation_summary.csv` (regenerated) |
+
+### Follow-up 3: Disclose or investigate ablation 1's (AT2-only) displacement sign flip
+
+| Field | Value |
+|-------|-------|
+| What changes | Investigate why AT1-cell removal (Ablation 1, AT2-only) flips the displacement sign; add this ablation's displacement result explicitly to the manuscript's robustness discussion. *See RUNBOOK.md Step 15.* |
+| Why it matters | `results/ablations/01_at2_only/metrics.json` shows displacement effect size flips sign entirely under AT2-only restriction (r = +0.14 in the primary analysis vs. r ≈ -0.29 for AT2-only) — this is not mentioned anywhere in `paper_v3.tex`'s ablation robustness discussion (Results §"Ablation analyses distinguish robust from fragile conclusions"), which currently only lists LODO/embedding/batch-correction/apoptosis-removal as tested for displacement robustness |
+| Compare | AT2-only displacement effect size and its interpretation vs. the primary (AT1+AT2+transitional) analysis's r=+0.14 |
+| Strengthens if | The sign flip is explained by a specific, non-artifactual AT1-vs-AT2 geometric difference (e.g. AT1 cells' distance-to-healthy-centroid distribution is systematically different) and disclosed with that explanation |
+| Weakens if | The sign flip reflects a genuine, unexplained AT1-vs-AT2 asymmetry — the manuscript's claim that displacement failure is "a robust feature of the data, not an artifact of a single pipeline choice" (line 222) needs a caveat specific to cell-type composition |
+| Output files | Manuscript revision (Results/Discussion) — no new data file; source is the existing `results/ablations/01_at2_only/metrics.json` |
+
+### Follow-up 4: Strengthen or soften the mechanism-regression claim
+
+| Field | Value |
+|-------|-------|
+| Purpose | `results/v3/fan_out_contribution.csv` (senescence coeff 6.83, oxidative_stress 3.83, nfkb_inflammatory 1.95 as top contributors to the fan-out/dispersion pattern) is an unregularized OLS with no p-values or cross-validation reported in the underlying file. `paper_v3.tex` already hedges this correctly (R²=0.11, described as "a partial mechanistic interpretation," line 277) but a reader checking the raw file would find less rigor than the manuscript framing implies |
+| Input | `results/v3/fan_out_contribution.csv`; the underlying program-score/distance-to-centroid data it was regressed from |
+| Method | Either add significance testing (e.g. permutation-based p-values on regression coefficients) and cross-validation (e.g. train/test split or k-fold R²) to `src/mechanism.py`'s `fan_out_contribution()` function and re-run, or further soften `paper_v3.tex`'s mechanistic-decomposition language to more explicitly flag it as exploratory/hypothesis-generating rather than a validated finding. *See RUNBOOK.md Step 16.* |
+| Primary output | Re-run `results/v3/fan_out_contribution.csv` with added p-value/CV columns, OR a manuscript text revision softening the Discussion's "Mechanistic decomposition" paragraph |
+| Plots | None required (optional: a coefficient-CI plot if significance testing is added) |
+| Tables | `results/v3/fan_out_contribution.csv` (regenerated with p-values/CV, if that path is taken) |
+| Code module | `src/mechanism.py` → `fan_out_contribution()` |
+| Failure mode | If coefficients don't survive permutation testing or cross-validated R² is near zero, the "mechanistic decomposition" paragraph in the Discussion should be substantially caveated or removed rather than presented as a partial-but-real mechanistic finding |

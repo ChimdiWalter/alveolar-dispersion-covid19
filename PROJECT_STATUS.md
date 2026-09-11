@@ -158,11 +158,20 @@ See `MANUSCRIPT_OUTLINE.md` and `manuscript/` directory.
 - `docs/ORTHOGONAL_VALIDATION_PLAN.md`
 
 ### Current paper level assessment
+**Corrected 2026-08-25 — see Phase 11 below for the evidence.** The bullets below
+previously read as a checklist of upgrades; they should read as a calibrated
+target, not a floor.
 - **Class project:** exceeded
 - **Workshop / poster:** exceeded
-- **Strong specialized journal (Genome Biology, NAR Genomics):** YES — current level
-- **Nature Communications / Cell Reports:** achievable with donor-level inference and portable state score
-- **Nature:** requires spatial validation, pathology linkage, or functional validation
+- **Strong specialized journal (Genome Biology, NAR Genomics and Bioinformatics,
+  Communications Biology, iScience, Am J Respir Cell Mol Biol):** this is the
+  paper's actual current level, and the honest primary submission target — not a
+  floor already cleared.
+- **Nature Communications / Cell Reports:** an uncertain **stretch goal**, not
+  "achievable." Donor-level inference and the portable state score are done, but
+  that alone does not close the gap to Nat Comms — see Phase 11.
+- **Nature:** not realistic. Requires spatial validation, pathology linkage, or
+  functional validation, none of which exist or are planned.
 
 ---
 
@@ -174,3 +183,89 @@ See `MANUSCRIPT_OUTLINE.md` and `manuscript/` directory.
 5. Update paper_v3.tex with computed results — required
 6. Download external datasets for generalization (future)
 7. Orthogonal validation (future — requires spatial / pathology data)
+
+**Status note (2026-08-25):** items 1–5 above are done — see Phase 11.
+
+---
+
+## Phase 11: Critical Review and Journal-Tier Correction (2026-08-25)
+
+A closer read of `manuscript/paper_v3.tex` against real comparable published work,
+plus a direct (not self-reported) audit of the ablations and replication code,
+found the journal-tier assessment above was overly optimistic and surfaced two
+real gaps in the ablation grid. Nothing in this phase changes any manuscript
+number or the underlying code — this is a documentation correction. Findings are
+tracked as follow-up test cases in `ANALYSIS_PLAN.md` §9.
+
+### Journal-tier reality check
+- **Watson et al. (2023), *Am J Respir Cell Mol Biol*** — a closely comparable
+  COVID-19 alveolar-epithelial reanalysis (167,280 cells, 6 studies pooled) —
+  included lentiviral functional validation *and* IHC protein-level confirmation
+  *and* bulk RNA-seq corroboration:
+  [PMC10704119](https://pmc.ncbi.nlm.nih.gov/articles/PMC10704119/). `paper_v3`
+  has none of that; it is purely computational reanalysis.
+- **"Assessment of dispersion metrics for estimating single-cell transcriptional
+  variability"** (*PLOS Computational Biology*, 2025 biorxiv preprint:
+  [10.1101/2025.05.19.654854](https://www.biorxiv.org/content/10.1101/2025.05.19.654854))
+  confirms dispersion/distance-to-centroid metrics are an established, actively
+  studied methodology — not a framework this paper invented. `paper_v3`'s real
+  contribution is the *application* to lethal COVID-19 alveolar injury plus the
+  *extensive multi-cohort replication* (35 datasets, 618 donors), not a new
+  statistical method.
+- **Corrected verdict:** Nature is not realistic (unchanged — the original doc
+  already conceded this). Nature Communications is a stretch, not an achieved
+  checklist item, absent new (functional/spatial) data. The honest, defensible
+  primary target is a specialized computational-biology/single-cell or pulmonary
+  journal — Genome Biology, NAR Genomics and Bioinformatics, Communications
+  Biology, iScience, or Am J Respir Cell Mol Biol. That is this paper's actual
+  current level, and should be stated as the target, not a floor already cleared.
+
+### Ablation grid: a real coverage gap
+- `displacement_effect_size` is silently **frozen at the primary run's cached
+  value** (`r = 0.1407`) across 5 of 10 ablations — embedding (#02),
+  batch-correction (#03), root-strategy (#05), gene-program (#08), and Palantir
+  (#09) — because `centroid_distance()` in `src/stats.py` defaults to
+  `rep_key="X_pca"` and is never passed the ablation's actual embedding
+  (`X_pca_harmony`, UMAP, diffmap, etc.). `paper_v3.tex` line 222 claims
+  displacement was "never significant... across all ablations"; that claim is
+  only genuinely re-tested by half the grid.
+- **Ablation 1 (AT2-only) flips the displacement sign entirely**
+  (`r = +0.14 → -0.29`, per `results/ablations/01_at2_only/metrics.json`) and is
+  not mentioned anywhere in the manuscript.
+- Not fixed (documentation-only per decision) — tracked as
+  Follow-up 2 / `RUNBOOK.md` Step 14 (and the AT2-only sign flip as Follow-up 3
+  / Step 15) in `ANALYSIS_PLAN.md` §9.
+
+### Mechanism-regression caveat
+`results/v3/fan_out_contribution.csv` (senescence coeff 6.83, oxidative_stress
+3.83, nfkb_inflammatory 1.95 as top "drivers" of dispersion) is an unregularized
+OLS with no p-values or cross-validation in the underlying file. `paper_v3.tex`
+already hedges this appropriately (R²=0.11, "partial... interpretation," line
+277), but the underlying analysis is weaker than that framing alone conveys to a
+reader who doesn't check the raw file. Tracked as Follow-up 4 / `RUNBOOK.md`
+Step 16 in `ANALYSIS_PLAN.md` §9.
+
+### The 84-gene panel — the actionable good news
+`scripts/replication/fetch_replication.py`'s `gene_shortlist` (lines 31–43) is
+just the union of `config.yaml`'s gene-program genes plus a fixed marker list —
+a pragmatic choice, not a hard data-source limitation. The code's own comment
+says why: *"We restrict var-axis to the gene-program genes plus canonical markers
+to keep the download compact (<1 GB)."* `cellxgene_census` is a public, no-login
+API with **921,510 raw alveolar cells available** (per
+`scripts/replication/analyze_replication.py`'s docstring) before the
+84-gene/200-cells-per-donor subsampling that produced the paper's reported
+89,736-cell figure. Expanding this — exactly what `paper_v3.tex`'s own
+Limitations (line 287) and Future Directions (line 292) already call the "ideal
+next step" — is achievable via a **code-only change** (loosen
+`gene_shortlist`/`var_value_filter`, re-run `analyze_replication.py`), with no
+manual portal-gated data acquisition, unlike the primary SCP1219 cohort. This is
+the single best, most concrete, lowest-blocker next validation step available.
+Tracked as Follow-up 1 / `RUNBOOK.md` Step 13 in `ANALYSIS_PLAN.md` §9.
+
+### Manuscript prose
+`paper_v3.tex`'s Results and Discussion sections repeat the same bolded-topic-
+sentence pattern roughly 15+ times ("X was supported.", "Robust findings.",
+"Portable.", "Not portable.", etc.), and the Discussion largely re-narrates each
+Results subsection in the same order with the same numbers rather than
+synthesizing at a higher level. Worth a revision pass; not executed on this
+branch.
